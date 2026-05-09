@@ -1,0 +1,18 @@
+# Dependencies
+**/node_modules/
+**/vendor/
+
+# Build outputs
+**/dist/
+**/*.exe
+**/tmp/
+backend/armtrade-backend
+
+# IDEs
+.vscode/
+.idea/
+
+# Environment
+**/.env
+**/.env.local
+**/.env.*.local
