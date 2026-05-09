@@ -1,0 +1,194 @@
+@import 'primeicons/primeicons.css';
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #0a0e1a;
+  color: #e2e8f0;
+  overflow-x: hidden;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.5);
+}
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.15); }
+  50% { box-shadow: 0 0 40px rgba(99, 102, 241, 0.3); }
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s ease-out both;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out both;
+}
+
+/* PrimeNG Global Overrides for dark mode */
+.p-component {
+  font-family: 'Inter', sans-serif !important;
+}
+
+/* Dialog dark mode */
+.p-dialog {
+  background: #131929 !important;
+  border: 1px solid rgba(99, 102, 241, 0.2) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5) !important;
+}
+
+.p-dialog .p-dialog-header {
+  background: transparent !important;
+  color: #f1f5f9 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+  padding: 1.25rem 1.5rem !important;
+}
+
+.p-dialog .p-dialog-content {
+  background: transparent !important;
+  color: #e2e8f0 !important;
+  padding: 1.5rem !important;
+}
+
+.p-dialog .p-dialog-header .p-dialog-header-icon {
+  color: #94a3b8 !important;
+}
+
+/* Overlay / backdrop */
+.p-dialog-mask {
+  backdrop-filter: blur(4px) !important;
+}
+
+/* Global autocomplete overlay overrides (PrimeNG appends overlays to <body>) */
+.p-autocomplete-panel,
+.p-autocomplete-overlay,
+p-autocomplete-overlay,
+.p-overlay {
+  background: #1a2035 !important;
+  border: 1px solid rgba(99, 102, 241, 0.25) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6) !important;
+  overflow: hidden !important;
+}
+
+.p-autocomplete-list,
+.p-autocomplete-items {
+  padding: 0.5rem !important;
+  background: #1a2035 !important;
+  list-style: none !important;
+  margin: 0 !important;
+}
+
+.p-autocomplete-option,
+.p-autocomplete-item {
+  padding: 0.75rem 1rem !important;
+  border-radius: 8px !important;
+  color: #e2e8f0 !important;
+  cursor: pointer !important;
+  transition: background 0.15s ease !important;
+  background: transparent !important;
+  margin-bottom: 2px !important;
+}
+
+.p-autocomplete-option:hover,
+.p-autocomplete-option.p-focus,
+.p-autocomplete-item:hover,
+.p-autocomplete-item.p-highlight {
+  background: rgba(99, 102, 241, 0.15) !important;
+}
+
+/* Dropdown / Select panel global overrides */
+.p-dropdown-panel,
+.p-select-overlay,
+.p-select-panel,
+p-select-overlay {
+  background: #131929 !important;
+  border: 1px solid rgba(99, 102, 241, 0.25) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6) !important;
+  overflow: hidden !important;
+}
+
+.p-dropdown-items-wrapper,
+.p-select-list-wrapper {
+  background: transparent !important;
+}
+
+.p-dropdown-items,
+.p-select-list {
+  padding: 0.5rem !important;
+  list-style: none !important;
+  margin: 0 !important;
+  background: #131929 !important;
+}
+
+.p-dropdown-item,
+.p-select-option {
+  padding: 0.75rem 1rem !important;
+  border-radius: 8px !important;
+  color: #e2e8f0 !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+  background: transparent !important;
+  margin-bottom: 2px !important;
+  font-size: 0.875rem !important;
+}
+
+.p-dropdown-item:hover,
+.p-dropdown-item.p-highlight,
+.p-select-option:hover,
+.p-select-option.p-focus,
+.p-select-option.p-selected {
+  background: rgba(99, 102, 241, 0.15) !important;
+  color: #818cf8 !important;
+}

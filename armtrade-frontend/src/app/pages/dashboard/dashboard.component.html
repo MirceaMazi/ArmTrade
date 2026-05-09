@@ -1,0 +1,299 @@
+<div class="dashboard-page">
+  <!-- Top Navigation Bar -->
+  <nav class="top-bar animate-fade-in">
+    <div class="top-bar-left">
+      <button class="back-btn" (click)="goBack()">
+        ←
+      </button>
+      <span class="nav-logo" (click)="goBack()">ArmTrade</span>
+      <span class="nav-ticker">{{ ticker | uppercase }}</span>
+    </div>
+    <div class="top-bar-search">
+      <p-autoComplete
+        [(ngModel)]="searchQuery"
+        [suggestions]="searchResults"
+        (completeMethod)="onSearchComplete($event)"
+        (onSelect)="onSearchSelect($event)"
+        field="shortname"
+        placeholder="Search another stock..."
+        [style]="{'width':'100%'}"
+        [inputStyle]="{'width':'100%', 'padding': '0.6rem 1rem', 'font-size': '0.875rem', 'border-radius': '10px', 'background': 'rgba(15, 23, 42, 0.8)', 'color': '#e2e8f0', 'border': '1px solid rgba(99, 102, 241, 0.2)'}"
+        [delay]="300"
+      >
+        <ng-template let-item pTemplate="item">
+          <div class="suggestion-item">
+            <span class="sugg-ticker">{{ item.symbol }}</span>
+            <span class="sugg-name">{{ item.shortname || item.longname }}</span>
+          </div>
+        </ng-template>
+      </p-autoComplete>
+    </div>
+  </nav>
+
+  <div class="dashboard-content">
+    <div class="dashboard-grid animate-fade-in-up">
+      <!-- Chart Section -->
+      <div class="chart-section">
+        <div class="glass-card">
+          <div class="card-header">
+            <span class="card-title">Price Action</span>
+            <div class="range-buttons">
+              <button
+                *ngFor="let r of chartRanges"
+                class="range-btn"
+                [class.active]="selectedRange === r.range"
+                (click)="changeChartRange(r.range, r.interval)"
+              >{{ r.label }}</button>
+            </div>
+          </div>
+          <div class="chart-area">
+            <div #chartContainer style="height: 100%; width: 100%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fundamentals Section -->
+      <div class="fundamentals-section">
+        <div class="glass-card fundamentals-card">
+          <div class="card-header">
+            <span class="card-title">Fundamentals</span>
+          </div>
+
+          <div *ngIf="loadingFundamentals" class="skeleton-stack">
+            <p-skeleton width="100%" height="4rem" borderRadius="10px"></p-skeleton>
+            <p-skeleton width="100%" height="4rem" borderRadius="10px"></p-skeleton>
+            <p-skeleton width="100%" height="4rem" borderRadius="10px"></p-skeleton>
+          </div>
+
+          <div *ngIf="!loadingFundamentals && fundamentalData" class="fundamentals-content">
+            <div class="fundamentals-grid">
+              <div class="metric-box">
+                <span class="metric-label">Market Cap</span>
+                <span class="metric-value">{{ fundamentalData.defaultKeyStatistics?.enterpriseValue?.fmt || 'N/A' }}</span>
+              </div>
+              <div class="metric-box">
+                <span class="metric-label">P/E</span>
+                <span class="metric-value">{{ fundamentalData.summaryDetail?.trailingPE?.fmt || 'N/A' }}</span>
+              </div>
+              <div class="metric-box">
+                <span class="metric-label">Div. Yield</span>
+                <span class="metric-value">{{ fundamentalData.summaryDetail?.dividendYield?.fmt || 'N/A' }}</span>
+              </div>
+              <div class="metric-box">
+                <span class="metric-label">52W High</span>
+                <span class="metric-value">{{ fundamentalData.summaryDetail?.fiftyTwoWeekHigh?.fmt || 'N/A' }}</span>
+              </div>
+              <div class="metric-box">
+                <span class="metric-label">Margin</span>
+                <span class="metric-value">{{ fundamentalData.defaultKeyStatistics?.profitMargins?.fmt || 'N/A' }}</span>
+              </div>
+              <div class="metric-box">
+                <span class="metric-label">EBITDA</span>
+                <span class="metric-value">{{ fundamentalData.financialData?.ebitda?.fmt || 'N/A' }}</span>
+              </div>
+            </div>
+
+            <button class="show-more-btn" (click)="openFundamentalsDialog()">
+              View All Fundamentals →
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Unified Armand AI Section -->
+    <div class="armand-section animate-fade-in-up" style="animation-delay: 0.1s">
+      <div class="glass-card ai-card">
+        <div class="card-header">
+          <div class="ai-title-left">
+            <span class="ai-icon-circle">✦</span>
+            <span class="card-title">Armand AI</span>
+          </div>
+          <div *ngIf="!loadingAnalysis && armandAnalysis">
+            <p-tag
+              [value]="'Sentiment: ' + armandAnalysis.socialSentiment"
+              [severity]="getSentimentSeverity(armandAnalysis.socialSentiment)"
+              [rounded]="true"
+            ></p-tag>
+          </div>
+        </div>
+
+        <!-- Quick Analyze Button -->
+        <div class="quick-actions">
+          <p-button
+            label="Quick Analyze"
+            icon="pi pi-sparkles"
+            (onClick)="runAnalysis()"
+            [loading]="loadingAnalysis"
+            styleClass="rerun-btn"
+            [style]="{'margin-right': '0.75rem'}"
+          ></p-button>
+          <button class="toggle-advanced-btn" (click)="showAdvanced = !showAdvanced">
+            {{ showAdvanced ? 'Hide Advanced' : 'Advanced Options' }}
+            <span [class.rotated]="showAdvanced">▾</span>
+          </button>
+        </div>
+
+        <!-- Advanced Controls (collapsible) -->
+        <div *ngIf="showAdvanced" class="advanced-controls">
+          <div class="controls-grid">
+            <div class="control-group">
+              <label class="control-label">Investment Persona</label>
+              <p-select
+                [options]="personas"
+                [(ngModel)]="selectedPersona"
+                optionLabel="label"
+                optionValue="value"
+                [style]="{'width':'100%'}"
+                placeholder="Select persona..."
+              ></p-select>
+            </div>
+            <div class="control-group">
+              <label class="control-label">What-If Scenario</label>
+              <textarea pInputTextarea
+                [(ngModel)]="whatIfQuestion"
+                placeholder="e.g., What if the Fed raises rates by 50bps?"
+                [autoResize]="true"
+                rows="2"
+                [style]="{'width':'100%'}"
+              ></textarea>
+            </div>
+          </div>
+          <p class="advanced-hint">Set a persona and/or scenario, then click "Quick Analyze" above.</p>
+        </div>
+
+        <!-- Loading Indicator -->
+        <div *ngIf="loadingAnalysis" class="ai-loading">
+          <p-progressBar mode="indeterminate" [style]="{'height': '3px', 'border-radius': '4px'}"></p-progressBar>
+          <div class="ai-loading-text">
+            <span class="loading-sparkle">✦</span>
+            Armand is analyzing {{ ticker | uppercase }}...
+          </div>
+        </div>
+
+        <!-- Analysis Results -->
+        <div *ngIf="!loadingAnalysis && armandAnalysis" class="ai-results">
+          <div class="ai-results-header">
+            <div class="recommendation-badge" [ngClass]="armandAnalysis.recommendation.toLowerCase()">
+              {{ armandAnalysis.recommendation }}
+            </div>
+            <p-tag 
+              [value]="'Mode: ' + currentPersonaLabel" 
+              severity="secondary" 
+              [rounded]="true"
+              [style]="{'margin-left': '1rem', 'background': 'rgba(255,255,255,0.05)', 'border': '1px solid rgba(255,255,255,0.1)'}"
+            ></p-tag>
+            <span *ngIf="whatIfQuestion" class="what-if-indicator">
+              <i class="pi pi-question-circle"></i> with scenario
+            </span>
+          </div>
+          <ul class="reasoning-list">
+            <li *ngFor="let reason of armandAnalysis.reasoning">{{ reason }}</li>
+          </ul>
+
+          <div *ngIf="armandAnalysis.annotations && armandAnalysis.annotations.length > 0" class="annotations-section">
+            <h4 class="annotations-title">Chart Annotations</h4>
+            <div class="annotations-list">
+              <div *ngFor="let ann of armandAnalysis.annotations" class="annotation-item" [ngClass]="ann.type">
+                <span class="ann-date">{{ ann.date }}</span>
+                <span class="ann-type-badge" [ngClass]="ann.type">{{ ann.type | uppercase }}</span>
+                <span class="ann-desc">{{ ann.description }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty State -->
+        <div *ngIf="!loadingAnalysis && !armandAnalysis && !analysisRequested" class="ai-empty">
+          <div class="ai-empty-icon">✦</div>
+          <p>Configure your analysis preferences above, then click <strong>"Analyze with Armand"</strong> to get an AI-powered investment recommendation.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Fundamentals Dialog -->
+<p-dialog
+  header="All Fundamentals — {{ ticker | uppercase }}"
+  [(visible)]="showFundamentalsDialog"
+  [modal]="true"
+  [style]="{width: '650px'}"
+  [draggable]="false"
+  [resizable]="false"
+>
+  <div *ngIf="fundamentalData" class="dialog-fundamentals-grid">
+    <div class="dialog-metric">
+      <span class="dm-label">Market Cap</span>
+      <span class="dm-value">{{ fundamentalData.defaultKeyStatistics?.enterpriseValue?.fmt || 'N/A' }}</span>
+    </div>
+    <div class="dialog-metric">
+      <span class="dm-label">Trailing P/E</span>
+      <span class="dm-value">{{ fundamentalData.summaryDetail?.trailingPE?.fmt || 'N/A' }}</span>
+    </div>
+    <div class="dialog-metric">
+      <span class="dm-label">Forward P/E</span>
+      <span class="dm-value">{{ fundamentalData.defaultKeyStatistics?.forwardPE?.fmt || fundamentalData.summaryDetail?.forwardPE?.fmt || 'N/A' }}</span>
+    </div>
+    <div class="dialog-metric">
+      <span class="dm-label">PEG Ratio</span>
+      <span class="dm-value">{{ fundamentalData.defaultKeyStatistics?.pegRatio?.fmt || 'N/A' }}</span>
+    </div>
+    <div class="dialog-metric">
+      <span class="dm-label">Dividend Yield</span>
+      <span class="dm-value">{{ fundamentalData.summaryDetail?.dividendYield?.fmt || 'N/A' }}</span>
+    </div>
+    <div class="dialog-metric">
+      <span class="dm-label">52W High</span>
+      <span class="dm-value">{{ fundamentalData.summaryDetail?.fiftyTwoWeekHigh?.fmt || 'N/A' }}</span>
+    </div>
+    <div class="dialog-metric">
+      <span class="dm-label">52W Low</span>
+      <span class="dm-value">{{ fundamentalData.summaryDetail?.fiftyTwoWeekLow?.fmt || 'N/A' }}</span>
+    </div>
+    <div class="dialog-metric">
+      <span class="dm-label">Beta</span>
+      <span class="dm-value">{{ fundamentalData.defaultKeyStatistics?.beta?.fmt || 'N/A' }}</span>
+    </div>
+    <div class="dialog-metric">
+      <span class="dm-label">Profit Margin</span>
+      <span class="dm-value">{{ fundamentalData.defaultKeyStatistics?.profitMargins?.fmt || 'N/A' }}</span>
+    </div>
+    <div class="dialog-metric">
+      <span class="dm-label">EBITDA</span>
+      <span class="dm-value">{{ fundamentalData.financialData?.ebitda?.fmt || 'N/A' }}</span>
+    </div>
+    <div class="dialog-metric">
+      <span class="dm-label">Revenue</span>
+      <span class="dm-value">{{ fundamentalData.financialData?.totalRevenue?.fmt || 'N/A' }}</span>
+    </div>
+    <div class="dialog-metric">
+      <span class="dm-label">Gross Profit</span>
+      <span class="dm-value">{{ fundamentalData.financialData?.grossProfits?.fmt || 'N/A' }}</span>
+    </div>
+    <div class="dialog-metric">
+      <span class="dm-label">Free Cash Flow</span>
+      <span class="dm-value">{{ fundamentalData.financialData?.freeCashflow?.fmt || 'N/A' }}</span>
+    </div>
+    <div class="dialog-metric">
+      <span class="dm-label">ROE</span>
+      <span class="dm-value">{{ fundamentalData.financialData?.returnOnEquity?.fmt || 'N/A' }}</span>
+    </div>
+    <div class="dialog-metric">
+      <span class="dm-label">Debt to Equity</span>
+      <span class="dm-value">{{ fundamentalData.financialData?.debtToEquity?.fmt || 'N/A' }}</span>
+    </div>
+    <div class="dialog-metric">
+      <span class="dm-label">Current Ratio</span>
+      <span class="dm-value">{{ fundamentalData.financialData?.currentRatio?.fmt || 'N/A' }}</span>
+    </div>
+    <div class="dialog-metric">
+      <span class="dm-label">Target Price</span>
+      <span class="dm-value">{{ fundamentalData.financialData?.targetMeanPrice?.fmt || 'N/A' }}</span>
+    </div>
+    <div class="dialog-metric">
+      <span class="dm-label">Analyst Rating</span>
+      <span class="dm-value">{{ fundamentalData.financialData?.recommendationKey || 'N/A' }}</span>
+    </div>
+  </div>
+</p-dialog>

@@ -1,0 +1,45 @@
+<div class="home-container">
+  <!-- Animated background particles -->
+  <div class="bg-gradient"></div>
+  <div class="bg-grid"></div>
+
+  <div class="search-wrapper animate-fade-in-up">
+    <div class="logo-glow"></div>
+    <h1 class="logo-title">ArmTrade</h1>
+    <p class="subtitle">AI-Powered Financial Intelligence</p>
+
+    <div class="search-box">
+      <i class="pi pi-search search-icon"></i>
+      <p-autoComplete
+        [(ngModel)]="selectedStock"
+        [suggestions]="results"
+        (completeMethod)="search($event)"
+        (onSelect)="onSelect($event)"
+        field="shortname"
+        placeholder="Search ticker or company name..."
+        [style]="{'width':'100%'}"
+        [inputStyle]="{'width':'100%', 'padding': '1rem 1rem 1rem 2.75rem', 'font-size': '1.1rem', 'border-radius': '12px', 'background': 'rgba(15, 23, 42, 0.9)', 'color': '#f1f5f9', 'border': '1px solid rgba(99, 102, 241, 0.3)'}"
+        [delay]="300"
+        [scrollHeight]="'350px'"
+      >
+        <ng-template let-item pTemplate="item">
+          <div class="suggestion-item">
+            <div class="suggestion-ticker">{{ item.symbol }}</div>
+            <div class="suggestion-name">{{ item.shortname || item.longname }}</div>
+            <div class="suggestion-exchange">{{ item.exchange }}</div>
+          </div>
+        </ng-template>
+      </p-autoComplete>
+    </div>
+
+    <div class="home-actions">
+      <p-button
+        label="AI Stock Screener"
+        icon="pi pi-sparkles"
+        [text]="true"
+        (onClick)="openScreener()"
+        styleClass="screener-btn"
+      ></p-button>
+    </div>
+  </div>
+</div>
