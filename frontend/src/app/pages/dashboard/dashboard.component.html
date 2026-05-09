@@ -101,6 +101,107 @@
       </div>
     </div>
 
+    <!-- Financial Data & News Grid -->
+    <div class="dashboard-grid animate-fade-in-up" style="animation-delay: 0.05s; margin-top: 1.5rem; margin-bottom: 1.5rem;">
+      
+      <!-- Financial Data Card -->
+      <div class="financial-charts-section">
+        <div class="glass-card">
+          <div class="card-header">
+            <span class="card-title">Yearly Financials</span>
+          </div>
+          <div *ngIf="loadingFundamentals" class="skeleton-stack">
+             <p-skeleton width="100%" height="8rem" borderRadius="10px"></p-skeleton>
+          </div>
+          <div *ngIf="!loadingFundamentals && fundamentalData" class="financials-data-content">
+            <div *ngIf="fundamentalData.earnings?.financialsChart?.yearly?.length > 0; else noEarnings">
+              <div class="yearly-bar" *ngFor="let year of fundamentalData.earnings.financialsChart.yearly">
+                <div class="year-label">{{ year.date }}</div>
+                <div class="bars-container">
+                   <div class="bar-track">
+                     <div class="bar-fill rev-fill" [style.width]="(year.revenue.raw / maxFinancialValue * 100) + '%'"></div>
+                     <div class="bar-content">
+                       <span class="bar-label">Revenue</span>
+                       <span class="bar-value">{{ year.revenue.fmt }}</span>
+                     </div>
+                   </div>
+                   <div class="bar-track">
+                     <div class="bar-fill earn-fill" [ngClass]="{'negative-fill': year.earnings.raw < 0}" [style.width]="(abs(year.earnings.raw) / maxFinancialValue * 100) + '%'"></div>
+                     <div class="bar-content">
+                       <span class="bar-label">Earnings</span>
+                       <span class="bar-value" [ngClass]="{'negative': year.earnings.raw < 0}">{{ year.earnings.fmt }}</span>
+                     </div>
+                   </div>
+                </div>
+              </div>
+            </div>
+            <ng-template #noEarnings>
+              <p class="no-data-msg">Yearly financials not available.</p>
+            </ng-template>
+            
+            <div class="dividend-info">
+              <h4>Dividends</h4>
+              <div class="dividend-summary" *ngIf="fundamentalData.summaryDetail?.dividendYield?.raw">
+                <p>Current Yield: <strong>{{ fundamentalData.summaryDetail?.dividendYield?.fmt }}</strong></p>
+                <p>Dividend Rate: <strong>{{ fundamentalData.summaryDetail?.dividendRate?.fmt }}</strong></p>
+              </div>
+              
+              <div *ngIf="loadingDividends" class="skeleton-stack" style="margin-top: 1rem">
+                <p-skeleton width="100%" height="2rem" borderRadius="6px"></p-skeleton>
+                <p-skeleton width="100%" height="2rem" borderRadius="6px"></p-skeleton>
+              </div>
+
+              <div *ngIf="!loadingDividends && dividends.length > 0" class="dividend-history">
+                <div class="div-history-header">
+                  <span>Date</span>
+                  <span>Amount / Share</span>
+                </div>
+                <div class="div-history-list">
+                  <div class="div-history-item" *ngFor="let div of dividends">
+                    <span class="div-date">{{ div.dateString }}</span>
+                    <span class="div-amount">${{ div.amount | number:'1.2-4' }}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div *ngIf="!loadingDividends && dividends.length === 0" class="no-data-msg" style="margin-top: 0.5rem">
+                No recent dividend history found.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- News Section -->
+      <div class="news-section">
+        <div class="glass-card">
+          <div class="card-header">
+            <span class="card-title">Latest News & AI Sentiment</span>
+          </div>
+          <div *ngIf="loadingNews" class="skeleton-stack">
+             <p-skeleton width="100%" height="3rem" borderRadius="10px" *ngFor="let i of [1,2,3]"></p-skeleton>
+          </div>
+          <div *ngIf="!loadingNews && news.length > 0" class="news-list">
+            <div class="news-item" *ngFor="let n of news">
+              <a [href]="n.link" target="_blank" class="news-title">{{ n.title }}</a>
+              <div class="news-ai-analysis">
+                <p-tag 
+                  [value]="n.sentiment" 
+                  [severity]="getSentimentSeverity(n.sentiment)" 
+                  [rounded]="true"
+                  styleClass="news-badge"
+                ></p-tag>
+                <span class="news-reason">{{ n.reason }}</span>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="!loadingNews && news.length === 0">
+             <p class="no-data-msg">No recent news found.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Unified Armand AI Section -->
     <div class="armand-section animate-fade-in-up" style="animation-delay: 0.1s">
       <div class="glass-card ai-card">

@@ -61,13 +61,23 @@ func (s *YahooFinanceService) Search(query string) (map[string]interface{}, erro
 	return s.makeRequest(url, false)
 }
 
+func (s *YahooFinanceService) GetNews(ticker string) (map[string]interface{}, error) {
+	url := fmt.Sprintf("https://query2.finance.yahoo.com/v1/finance/search?q=%s&newsCount=3", ticker)
+	return s.makeRequest(url, false)
+}
+
+func (s *YahooFinanceService) GetDividends(ticker string) (map[string]interface{}, error) {
+	url := fmt.Sprintf("https://query1.finance.yahoo.com/v8/finance/chart/%s?interval=1d&range=10y&events=div", ticker)
+	return s.makeRequest(url, false)
+}
+
 func (s *YahooFinanceService) GetChart(ticker, interval, trange string) (map[string]interface{}, error) {
 	url := fmt.Sprintf("https://query1.finance.yahoo.com/v8/finance/chart/%s?interval=%s&range=%s", ticker, interval, trange)
 	return s.makeRequest(url, false)
 }
 
 func (s *YahooFinanceService) GetFundamentals(ticker string) (map[string]interface{}, error) {
-	modules := "financialData,defaultKeyStatistics,assetProfile,summaryDetail"
+	modules := "financialData,defaultKeyStatistics,assetProfile,summaryDetail,earnings"
 	url := fmt.Sprintf("https://query2.finance.yahoo.com/v10/finance/quoteSummary/%s?modules=%s&crumb=%s", ticker, modules, s.crumb)
 	
 	res, err := s.makeRequest(url, true)

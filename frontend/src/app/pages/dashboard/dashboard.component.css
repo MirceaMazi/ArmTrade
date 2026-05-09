@@ -587,6 +587,230 @@
   color: #f1f5f9;
 }
 
+/* ─── Financials Data Content ─── */
+.financials-data-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.yearly-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.year-label {
+  font-weight: 600;
+  color: #94a3b8;
+  width: 40px;
+}
+
+.bars-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.bar-track {
+  position: relative;
+  height: 1.8rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.8s ease-out;
+  z-index: 1;
+}
+
+.rev-fill {
+  background: rgba(99, 102, 241, 0.2);
+  border-right: 2px solid rgba(99, 102, 241, 0.6);
+}
+
+.earn-fill {
+  background: rgba(16, 185, 129, 0.15);
+  border-right: 2px solid rgba(16, 185, 129, 0.5);
+}
+
+.earn-fill.negative-fill {
+  background: rgba(239, 68, 68, 0.15);
+  border-right: 2px solid rgba(239, 68, 68, 0.5);
+}
+
+.bar-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 0 0.75rem;
+  font-size: 0.85rem;
+}
+
+.bar-label {
+  color: #64748b;
+}
+
+.bar-value {
+  font-weight: 600;
+  color: #f8fafc;
+}
+
+.bar-value.negative {
+  color: #ef4444;
+}
+
+.dividend-info h4 {
+  margin: 0 0 0.5rem 0;
+  color: #818cf8;
+  font-size: 1rem;
+}
+
+.dividend-info p {
+  margin: 0.25rem 0;
+  font-size: 0.9rem;
+  color: #cbd5e1;
+}
+
+.dividend-summary {
+  margin-bottom: 1rem;
+}
+
+.dividend-history {
+  background: rgba(10, 14, 26, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.div-history-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 1rem;
+  background: rgba(99, 102, 241, 0.1);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #818cf8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.div-history-list {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+/* Custom Scrollbar for div-history-list */
+.div-history-list::-webkit-scrollbar {
+  width: 4px;
+}
+.div-history-list::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+}
+.div-history-list::-webkit-scrollbar-thumb {
+  background: rgba(99, 102, 241, 0.3);
+  border-radius: 4px;
+}
+.div-history-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(99, 102, 241, 0.5);
+}
+
+.div-history-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.6rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+  font-size: 0.85rem;
+  transition: background 0.2s;
+}
+
+.div-history-item:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.div-history-item:last-child {
+  border-bottom: none;
+}
+
+.div-date {
+  color: #94a3b8;
+}
+
+.div-amount {
+  font-weight: 600;
+  color: #f8fafc;
+}
+
+/* ─── News Section ─── */
+.news-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.news-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.news-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.news-title {
+  color: #e2e8f0;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  line-height: 1.4;
+  transition: color 0.2s;
+}
+
+.news-title:hover {
+  color: #818cf8;
+}
+
+.news-ai-analysis {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.news-badge {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+}
+
+.news-reason {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  font-style: italic;
+}
+
+.no-data-msg {
+  color: #64748b;
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
 /* ─── PrimeNG Overrides ─── */
 ::ng-deep .p-dropdown {
   background: rgba(10, 14, 26, 0.7) !important;

@@ -32,7 +32,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
   loadingAnalysis: boolean = false;
   analysisRequested: boolean = false;
   fundamentalData: any = null;
+  maxFinancialValue: number = 0;
   armandAnalysis: ArmandAnalysis | null = null;
+  news: any[] = [];
+  loadingNews: boolean = true;
+  dividends: any[] = [];
+  loadingDividends: boolean = true;
 
   // Fundamentals dialog
   showFundamentalsDialog: boolean = false;
@@ -150,11 +155,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   private loadDashboardData() {
+    if (this.chart) {
+      this.chart.remove();
+    }
+    
     this.loadingFundamentals = true;
+    this.loadingNews = true;
+    this.loadingDividends = true;
     // Reset AI state — user must request it
     this.loadingAnalysis = false;
     this.analysisRequested = false;
     this.armandAnalysis = null;
+    this.news = [];
+    this.dividends = [];
 
     this.stockService.getChart(this.ticker, this.selectedInterval, this.selectedRange).subscribe({
       next: (res) => this.renderChart(res),
@@ -165,12 +178,49 @@ export class DashboardComponent implements OnInit, OnDestroy {
       next: (res) => {
         if (res.quoteSummary && res.quoteSummary.result && res.quoteSummary.result.length > 0) {
           this.fundamentalData = res.quoteSummary.result[0];
+          
+          // Calculate max value for CSS bar chart
+          this.maxFinancialValue = 0;
+          if (this.fundamentalData.earnings?.financialsChart?.yearly) {
+            for (let year of this.fundamentalData.earnings.financialsChart.yearly) {
+              const rev = year.revenue?.raw || 0;
+              const earn = Math.abs(year.earnings?.raw || 0); // use absolute for scale
+              if (rev > this.maxFinancialValue) this.maxFinancialValue = rev;
+              if (earn > this.maxFinancialValue) this.maxFinancialValue = earn;
+            }
+          }
         }
         this.loadingFundamentals = false;
       },
       error: (err) => {
         console.error('Error fetching fundamentals', err);
         this.loadingFundamentals = false;
+      }
+    });
+
+    this.stockService.getNews(this.ticker).subscribe({
+      next: (res) => {
+        this.news = res;
+        this.loadingNews = false;
+      },
+      error: (err) => {
+        console.error('Error fetching news', err);
+        this.loadingNews = false;
+      }
+    });
+
+    this.stockService.getDividends(this.ticker).subscribe({
+      next: (res) => {
+        // Format dates to locale string for UI
+        this.dividends = res.map(div => ({
+          ...div,
+          dateString: new Date(div.date * 1000).toLocaleDateString()
+        }));
+        this.loadingDividends = false;
+      },
+      error: (err) => {
+        console.error('Error fetching dividends', err);
+        this.loadingDividends = false;
       }
     });
   }
@@ -292,5 +342,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     this.candlestickSeries.setData(this.chartData);
     this.chart.timeScale().fitContent();
+  }
+
+  abs(val: number): number {
+    return Math.abs(val);
   }
 }

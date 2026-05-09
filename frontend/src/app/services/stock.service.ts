@@ -70,4 +70,12 @@ export class StockService {
   screenStocks(query: string): Observable<ScreenerResponse> {
     return this.http.post<ScreenerResponse>(`${this.apiUrl}/armand/screener`, { query });
   }
+
+  getNews(ticker: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/news/${ticker}`);
+  }
+
+  getDividends(ticker: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/dividends/${ticker}`);
+  }
 }

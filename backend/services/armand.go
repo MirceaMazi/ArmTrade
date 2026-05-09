@@ -309,3 +309,104 @@ Recent Fundamentals (JSON):
 Recent Price Action (1 Month) (JSON):
 %s`, personaStr, req.Ticker, whatIfStr, string(fBytes), string(cBytes))
 }
+
+type NewsItem struct {
+	Title string `json:"title"`
+	Link  string `json:"link"`
+}
+
+type NewsAnalysisResponse struct {
+	Sentiment string `json:"sentiment"` // Bullish, Bearish, Neutral
+	Reason    string `json:"reason"`
+}
+
+func (s *ArmandService) AnalyzeNewsSentiment(newsItems []NewsItem) ([]NewsAnalysisResponse, error) {
+	apiKey := os.Getenv("GEMINI_API_KEY")
+	defaultResponse := make([]NewsAnalysisResponse, len(newsItems))
+	for i := range defaultResponse {
+		defaultResponse[i] = NewsAnalysisResponse{Sentiment: "Neutral", Reason: "AI analysis requires API key"}
+	}
+
+	if apiKey == "" || len(newsItems) == 0 {
+		return defaultResponse, nil
+	}
+
+	schema := `{
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "sentiment": {"type": "string", "enum": ["Bullish", "Bearish", "Neutral"]},
+      "reason": {"type": "string", "description": "1 sentence explanation"}
+    },
+    "required": ["sentiment", "reason"]
+  }
+}`
+
+	var promptBuilder strings.Builder
+	promptBuilder.WriteString("You are a financial AI. Analyze the following news headlines and determine if they are Bullish, Bearish, or Neutral for the stock. Provide a 1-sentence reason for each.\n\n")
+	for i, item := range newsItems {
+		promptBuilder.WriteString(fmt.Sprintf("%d. %s\n", i+1, item.Title))
+	}
+	promptBuilder.WriteString(fmt.Sprintf("\nIMPORTANT: You must return the output strictly as a JSON array of objects matching this schema:\n%s", schema))
+
+	reqBody := geminiRequest{}
+	reqBody.GenerationConfig.ResponseMimeType = "application/json"
+	reqBody.Contents = []struct {
+		Parts []struct {
+			Text string `json:"text"`
+		} `json:"parts"`
+	}{
+		{
+			Parts: []struct {
+				Text string `json:"text"`
+			}{
+				{Text: promptBuilder.String()},
+			},
+		},
+	}
+
+	jsonData, err := json.Marshal(reqBody)
+	if err != nil {
+		return defaultResponse, err
+	}
+
+	url := fmt.Sprintf("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=%s", apiKey)
+	resp, err := http.Post(url, "application/json", bytes.NewBuffer(jsonData))
+	if err != nil {
+		return defaultResponse, err
+	}
+	defer resp.Body.Close()
+
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil || resp.StatusCode != 200 {
+		return defaultResponse, nil
+	}
+
+	var geminiResp geminiResponse
+	if err := json.Unmarshal(bodyBytes, &geminiResp); err != nil {
+		return defaultResponse, err
+	}
+
+	if len(geminiResp.Candidates) == 0 || len(geminiResp.Candidates[0].Content.Parts) == 0 {
+		return defaultResponse, nil
+	}
+
+	jsonString := geminiResp.Candidates[0].Content.Parts[0].Text
+	jsonString = strings.TrimPrefix(jsonString, "```json")
+	jsonString = strings.TrimPrefix(jsonString, "```")
+	jsonString = strings.TrimSuffix(jsonString, "```")
+	jsonString = strings.TrimSpace(jsonString)
+
+	var analysis []NewsAnalysisResponse
+	if err := json.Unmarshal([]byte(jsonString), &analysis); err != nil {
+		return defaultResponse, err
+	}
+
+	// Make sure we return the exact number of responses as requested items
+	if len(analysis) != len(newsItems) {
+		return defaultResponse, nil
+	}
+
+	return analysis, nil
+}
