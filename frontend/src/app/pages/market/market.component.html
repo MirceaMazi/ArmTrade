@@ -1,0 +1,102 @@
+<div class="market-page">
+  <nav class="top-bar animate-fade-in">
+    <div class="top-bar-left">
+      <button class="back-btn" (click)="goBack()">←</button>
+      <span class="nav-logo" (click)="goBack()">ArmTrade</span>
+      <span class="nav-ticker">Market Overview</span>
+    </div>
+  </nav>
+
+  <div class="market-content">
+    <!-- Macro Indicators Row -->
+    <div class="section-title animate-fade-in-up">Macro Indicators</div>
+    <div class="macro-row animate-fade-in-up">
+      <div *ngIf="loadingMacro" class="macro-skeleton">
+        <p-skeleton *ngFor="let i of [1,2,3,4,5,6,7]" width="140px" height="70px" borderRadius="12px"></p-skeleton>
+      </div>
+      <div *ngIf="!loadingMacro" class="macro-grid">
+        <div class="macro-card" *ngFor="let m of macros">
+          <span class="macro-name">{{ m.name }}</span>
+          <span class="macro-price">{{ m.price | number:'1.2-2' }}</span>
+          <span class="macro-change" [style.color]="m.change >= 0 ? '#4ade80' : '#f87171'">
+            {{ m.change >= 0 ? '+' : '' }}{{ m.change | number:'1.2-2' }}%
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sector Heatmap -->
+    <div class="section-title animate-fade-in-up" style="animation-delay: 0.05s">Sector Heatmap</div>
+    <div class="heatmap-grid animate-fade-in-up" style="animation-delay: 0.1s">
+      <div *ngIf="loadingSectors">
+        <p-skeleton *ngFor="let i of [1,2,3,4,5,6]" width="100%" height="80px" borderRadius="12px"></p-skeleton>
+      </div>
+      <div *ngIf="!loadingSectors" class="sectors-grid">
+        <div class="sector-tile" *ngFor="let s of sectors"
+          [style.background]="getSectorBg(s.change)"
+          [style.border-color]="getSectorColor(s.change) + '33'"
+          (click)="openDashboard(s.ticker)">
+          <span class="sector-name">{{ s.name }}</span>
+          <span class="sector-ticker">{{ s.ticker }}</span>
+          <span class="sector-change" [style.color]="getSectorColor(s.change)">
+            {{ s.change >= 0 ? '+' : '' }}{{ s.change | number:'1.2-2' }}%
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Market Movers -->
+    <div class="section-title animate-fade-in-up" style="animation-delay: 0.15s">Market Movers</div>
+    <div *ngIf="loadingMovers" class="movers-skeleton animate-fade-in-up">
+      <p-skeleton width="100%" height="200px" borderRadius="16px"></p-skeleton>
+    </div>
+    <div *ngIf="!loadingMovers && movers" class="movers-grid animate-fade-in-up" style="animation-delay: 0.2s">
+      <!-- Gainers -->
+      <div class="mover-column glass-card">
+        <h3 class="mover-title gainers-title">🚀 Top Gainers</h3>
+        <div class="mover-item" *ngFor="let item of movers.gainers" (click)="openDashboard(item.symbol)">
+          <div class="mover-left">
+            <span class="mover-symbol">{{ item.symbol }}</span>
+            <span class="mover-name">{{ item.name }}</span>
+          </div>
+          <div class="mover-right">
+            <span class="mover-price">{{ item.price | number:'1.2-2' }}</span>
+            <span class="mover-change positive">+{{ item.change | number:'1.2-2' }}%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Losers -->
+      <div class="mover-column glass-card">
+        <h3 class="mover-title losers-title">📉 Top Losers</h3>
+        <div class="mover-item" *ngFor="let item of movers.losers" (click)="openDashboard(item.symbol)">
+          <div class="mover-left">
+            <span class="mover-symbol">{{ item.symbol }}</span>
+            <span class="mover-name">{{ item.name }}</span>
+          </div>
+          <div class="mover-right">
+            <span class="mover-price">{{ item.price | number:'1.2-2' }}</span>
+            <span class="mover-change negative">{{ item.change | number:'1.2-2' }}%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Most Active -->
+      <div class="mover-column glass-card">
+        <h3 class="mover-title active-title">🔥 Most Active</h3>
+        <div class="mover-item" *ngFor="let item of movers.active" (click)="openDashboard(item.symbol)">
+          <div class="mover-left">
+            <span class="mover-symbol">{{ item.symbol }}</span>
+            <span class="mover-name">{{ item.name }}</span>
+          </div>
+          <div class="mover-right">
+            <span class="mover-price">{{ item.price | number:'1.2-2' }}</span>
+            <span class="mover-change" [class.positive]="item.change >= 0" [class.negative]="item.change < 0">
+              {{ item.change >= 0 ? '+' : '' }}{{ item.change | number:'1.2-2' }}%
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

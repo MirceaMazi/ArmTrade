@@ -1,0 +1,96 @@
+<div class="compare-page">
+  <nav class="top-bar animate-fade-in">
+    <div class="top-bar-left">
+      <button class="back-btn" (click)="goBack()">←</button>
+      <span class="nav-logo" (click)="goBack()">ArmTrade</span>
+      <span class="nav-ticker">Compare</span>
+    </div>
+  </nav>
+
+  <div class="compare-content animate-fade-in-up">
+    <div class="compare-inputs">
+      <div class="compare-input-group">
+        <label>Stock 1</label>
+        <p-autoComplete
+          [(ngModel)]="stock1"
+          [suggestions]="results1"
+          (completeMethod)="search1($event)"
+          field="shortname"
+          placeholder="Search first stock..."
+          [style]="{'width':'100%'}"
+          [inputStyle]="{'width':'100%', 'padding': '0.75rem 1rem', 'font-size': '0.9rem', 'border-radius': '10px', 'background': 'rgba(15, 23, 42, 0.8)', 'color': '#e2e8f0', 'border': '1px solid rgba(99, 102, 241, 0.2)'}"
+        >
+          <ng-template let-item pTemplate="item">
+            <div class="suggestion-item">
+              <span class="sugg-ticker">{{ item.symbol }}</span>
+              <span class="sugg-name">{{ item.shortname }}</span>
+            </div>
+          </ng-template>
+        </p-autoComplete>
+        <div *ngIf="stock1?.symbol" class="selected-badge">{{ stock1.symbol }}</div>
+      </div>
+
+      <div class="vs-divider">VS</div>
+
+      <div class="compare-input-group">
+        <label>Stock 2</label>
+        <p-autoComplete
+          [(ngModel)]="stock2"
+          [suggestions]="results2"
+          (completeMethod)="search2($event)"
+          field="shortname"
+          placeholder="Search second stock..."
+          [style]="{'width':'100%'}"
+          [inputStyle]="{'width':'100%', 'padding': '0.75rem 1rem', 'font-size': '0.9rem', 'border-radius': '10px', 'background': 'rgba(15, 23, 42, 0.8)', 'color': '#e2e8f0', 'border': '1px solid rgba(99, 102, 241, 0.2)'}"
+        >
+          <ng-template let-item pTemplate="item">
+            <div class="suggestion-item">
+              <span class="sugg-ticker">{{ item.symbol }}</span>
+              <span class="sugg-name">{{ item.shortname }}</span>
+            </div>
+          </ng-template>
+        </p-autoComplete>
+        <div *ngIf="stock2?.symbol" class="selected-badge">{{ stock2.symbol }}</div>
+      </div>
+    </div>
+
+    <p-button
+      label="Compare with Armand AI"
+      icon="pi pi-sparkles"
+      (onClick)="compare()"
+      [loading]="loading"
+      [disabled]="!stock1?.symbol || !stock2?.symbol"
+      styleClass="compare-btn"
+      [style]="{'width':'100%', 'margin-top': '1.5rem'}"
+    ></p-button>
+
+    <div *ngIf="loading" class="loading-state">
+      <p-skeleton width="100%" height="15rem" borderRadius="16px"></p-skeleton>
+    </div>
+
+    <div *ngIf="comparison" class="comparison-results glass-card">
+      <div class="verdict-header">
+        <div class="winner-badge">🏆 Winner: {{ comparison.winner }}</div>
+        <p class="verdict-text">{{ comparison.verdict }}</p>
+      </div>
+
+      <div class="summaries-grid">
+        <div class="summary-card" [class.winner]="comparison.winner === comparison.ticker1">
+          <h3>{{ comparison.ticker1 }}</h3>
+          <p>{{ comparison.summary1 }}</p>
+        </div>
+        <div class="summary-card" [class.winner]="comparison.winner === comparison.ticker2">
+          <h3>{{ comparison.ticker2 }}</h3>
+          <p>{{ comparison.summary2 }}</p>
+        </div>
+      </div>
+
+      <div class="reasoning-section">
+        <h4>Detailed Analysis</h4>
+        <ul>
+          <li *ngFor="let r of comparison.reasoning">{{ r }}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,78 @@
+<div class="earnings-page">
+  <nav class="top-bar animate-fade-in">
+    <div class="top-bar-left">
+      <button class="back-btn" (click)="goBack()">←</button>
+      <span class="nav-logo" (click)="goBack()">ArmTrade</span>
+      <span class="nav-ticker">Earnings Summary</span>
+    </div>
+  </nav>
+
+  <div class="earnings-content animate-fade-in-up">
+    <div class="glass-card input-card">
+      <h2>📊 Earnings Call Summarizer</h2>
+      <p class="subtitle">Paste an earnings call transcript and Armand AI will extract key insights</p>
+
+      <div class="form-group">
+        <label>Ticker (optional)</label>
+        <input class="ticker-input" [(ngModel)]="ticker" placeholder="e.g. AAPL" />
+      </div>
+
+      <div class="form-group file-upload-group">
+        <label>Upload Transcript (PDF or Word)</label>
+        <div class="file-upload-wrapper">
+          <input type="file" id="transcriptFile" (change)="onFileSelected($event)" accept=".pdf,.docx" class="file-input" />
+          <label for="transcriptFile" class="file-label">
+            <i class="pi" [ngClass]="parsingFile ? 'pi-spin pi-spinner' : 'pi-upload'"></i> 
+            {{ selectedFileName || 'Choose a PDF or DOCX file...' }}
+          </label>
+          <span class="error-msg" *ngIf="fileError">{{ fileError }}</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Earnings Call Transcript</label>
+        <textarea class="transcript-input" [(ngModel)]="transcript" placeholder="Paste the full earnings call transcript here, or upload a file above..." rows="12"></textarea>
+      </div>
+
+      <p-button
+        label="Summarize with Armand AI"
+        icon="pi pi-sparkles"
+        (onClick)="summarize()"
+        [loading]="loading"
+        [disabled]="!transcript.trim()"
+        styleClass="summarize-btn"
+        [style]="{'width':'100%'}"
+      ></p-button>
+    </div>
+
+    <div *ngIf="loading" class="loading-state">
+      <p-skeleton width="100%" height="15rem" borderRadius="16px"></p-skeleton>
+    </div>
+
+    <div *ngIf="summary" class="glass-card results-card">
+      <div class="results-header">
+        <h3>AI Summary</h3>
+        <p-tag [value]="summary.sentiment" [severity]="getSentimentSeverity(summary.sentiment)" [rounded]="true"></p-tag>
+      </div>
+
+      <div class="key-points">
+        <h4>Key Takeaways</h4>
+        <ul>
+          <li *ngFor="let point of summary.keyPoints">{{ point }}</li>
+        </ul>
+      </div>
+
+      <div class="outlook-section">
+        <h4>Forward Outlook</h4>
+        <p>{{ summary.outlook }}</p>
+      </div>
+
+      <div class="risks-section">
+        <h4>⚠️ Risks & Concerns</h4>
+        <ul>
+          <li *ngFor="let risk of summary.risks">{{ risk }}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

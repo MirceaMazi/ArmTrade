@@ -54,6 +54,12 @@
   user-select: none;
 }
 
+.ticker-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .nav-ticker {
   font-weight: 700;
   font-size: 0.95rem;
@@ -63,6 +69,29 @@
   border-radius: 6px;
   border: 1px solid rgba(99, 102, 241, 0.15);
   letter-spacing: 0.03em;
+}
+
+.watchlist-star {
+  background: none;
+  border: none;
+  color: #64748b;
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0.2rem;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.watchlist-star:hover {
+  transform: scale(1.1);
+  color: #fbbf24;
+}
+
+.watchlist-star i.active {
+  color: #fbbf24;
+  text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
 }
 
 .top-bar-search {

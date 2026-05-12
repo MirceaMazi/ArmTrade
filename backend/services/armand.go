@@ -410,3 +410,179 @@ func (s *ArmandService) AnalyzeNewsSentiment(newsItems []NewsItem) ([]NewsAnalys
 
 	return analysis, nil
 }
+
+// CompareStocks performs an AI-driven side-by-side comparison of two stocks
+type CompareResponse struct {
+	Winner     string   `json:"winner"`
+	Reasoning  []string `json:"reasoning"`
+	Ticker1    string   `json:"ticker1"`
+	Ticker2    string   `json:"ticker2"`
+	Summary1   string   `json:"summary1"`
+	Summary2   string   `json:"summary2"`
+	Verdict    string   `json:"verdict"`
+}
+
+func (s *ArmandService) CompareStocks(ticker1, ticker2 string) (*CompareResponse, error) {
+	apiKey := os.Getenv("GEMINI_API_KEY")
+	if apiKey == "" {
+		return &CompareResponse{
+			Winner:  "N/A",
+			Reasoning: []string{"GEMINI_API_KEY not set."},
+			Ticker1: ticker1,
+			Ticker2: ticker2,
+		}, nil
+	}
+
+	fund1, _ := s.yahooService.GetFundamentals(ticker1)
+	fund2, _ := s.yahooService.GetFundamentals(ticker2)
+	f1Bytes, _ := json.Marshal(fund1)
+	f2Bytes, _ := json.Marshal(fund2)
+
+	schema := `{
+  "type": "object",
+  "properties": {
+    "winner": {"type": "string"},
+    "reasoning": {"type": "array", "items": {"type": "string"}},
+    "ticker1": {"type": "string"},
+    "ticker2": {"type": "string"},
+    "summary1": {"type": "string"},
+    "summary2": {"type": "string"},
+    "verdict": {"type": "string"}
+  },
+  "required": ["winner", "reasoning", "ticker1", "ticker2", "summary1", "summary2", "verdict"]
+}`
+
+	prompt := fmt.Sprintf(`You are Armand, an elite financial AI for the ArmTrade platform.
+Compare these two stocks and determine which is the better investment right now.
+
+Stock 1: %s
+Fundamentals: %s
+
+Stock 2: %s
+Fundamentals: %s
+
+Provide:
+1. "winner" - the ticker symbol of the better investment
+2. "reasoning" - 4-5 bullet points explaining the comparison
+3. "summary1" - a 2-sentence summary of stock 1's strengths/weaknesses
+4. "summary2" - a 2-sentence summary of stock 2's strengths/weaknesses
+5. "verdict" - a 1-sentence final investment verdict
+
+IMPORTANT: Return strictly as JSON matching this schema:
+%s`, ticker1, string(f1Bytes), ticker2, string(f2Bytes), schema)
+
+	return callGeminiForType[CompareResponse](apiKey, prompt)
+}
+
+// SummarizeEarnings summarizes an earnings call transcript
+type EarningsSummaryResponse struct {
+	KeyPoints []string `json:"keyPoints"`
+	Sentiment string   `json:"sentiment"`
+	Outlook   string   `json:"outlook"`
+	Risks     []string `json:"risks"`
+}
+
+func (s *ArmandService) SummarizeEarnings(transcript, ticker string) (*EarningsSummaryResponse, error) {
+	apiKey := os.Getenv("GEMINI_API_KEY")
+	if apiKey == "" {
+		return &EarningsSummaryResponse{
+			KeyPoints: []string{"GEMINI_API_KEY not set."},
+			Sentiment: "Neutral",
+		}, nil
+	}
+
+	tickerContext := ""
+	if ticker != "" {
+		tickerContext = fmt.Sprintf("This is for ticker: %s.", ticker)
+	}
+
+	schema := `{
+  "type": "object",
+  "properties": {
+    "keyPoints": {"type": "array", "items": {"type": "string"}, "description": "5 key takeaways"},
+    "sentiment": {"type": "string", "enum": ["Bullish", "Bearish", "Neutral"]},
+    "outlook": {"type": "string", "description": "1-2 sentence forward-looking outlook"},
+    "risks": {"type": "array", "items": {"type": "string"}, "description": "2-3 key risks mentioned"}
+  },
+  "required": ["keyPoints", "sentiment", "outlook", "risks"]
+}`
+
+	prompt := fmt.Sprintf(`You are Armand, an elite financial AI for the ArmTrade platform.
+%s
+Summarize the following earnings call transcript. Extract:
+1. "keyPoints" - exactly 5 key takeaways from the call
+2. "sentiment" - overall sentiment (Bullish, Bearish, or Neutral)
+3. "outlook" - 1-2 sentence forward-looking outlook
+4. "risks" - 2-3 key risks or concerns mentioned
+
+Transcript:
+%s
+
+IMPORTANT: Return strictly as JSON matching this schema:
+%s`, tickerContext, transcript, schema)
+
+	return callGeminiForType[EarningsSummaryResponse](apiKey, prompt)
+}
+
+// callGeminiForType is a generic helper to call Gemini and parse the response into any type
+func callGeminiForType[T any](apiKey, prompt string) (*T, error) {
+	reqBody := geminiRequest{}
+	reqBody.GenerationConfig.ResponseMimeType = "application/json"
+	reqBody.Contents = []struct {
+		Parts []struct {
+			Text string `json:"text"`
+		} `json:"parts"`
+	}{
+		{
+			Parts: []struct {
+				Text string `json:"text"`
+			}{
+				{Text: prompt},
+			},
+		},
+	}
+
+	jsonData, err := json.Marshal(reqBody)
+	if err != nil {
+		return nil, err
+	}
+
+	url := fmt.Sprintf("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=%s", apiKey)
+	resp, err := http.Post(url, "application/json", bytes.NewBuffer(jsonData))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode != 200 {
+		return nil, fmt.Errorf("gemini api error: %d, %s", resp.StatusCode, string(bodyBytes))
+	}
+
+	var geminiResp geminiResponse
+	if err := json.Unmarshal(bodyBytes, &geminiResp); err != nil {
+		return nil, err
+	}
+
+	if len(geminiResp.Candidates) == 0 || len(geminiResp.Candidates[0].Content.Parts) == 0 {
+		return nil, fmt.Errorf("empty response from Gemini")
+	}
+
+	jsonString := geminiResp.Candidates[0].Content.Parts[0].Text
+	jsonString = strings.TrimPrefix(jsonString, "```json")
+	jsonString = strings.TrimPrefix(jsonString, "```")
+	jsonString = strings.TrimSuffix(jsonString, "```")
+	jsonString = strings.TrimSpace(jsonString)
+
+	var result T
+	if err := json.Unmarshal([]byte(jsonString), &result); err != nil {
+		return nil, fmt.Errorf("failed to parse AI response: %v, raw: %s", err, jsonString)
+	}
+
+	return &result, nil
+}
+

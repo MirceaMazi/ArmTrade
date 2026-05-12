@@ -78,4 +78,12 @@ export class StockService {
   getDividends(ticker: string): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/dividends/${ticker}`);
   }
+
+  compareStocks(ticker1: string, ticker2: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/armand/compare`, { ticker1, ticker2 });
+  }
+
+  summarizeEarnings(transcript: string, ticker?: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/armand/earnings`, { transcript, ticker });
+  }
 }

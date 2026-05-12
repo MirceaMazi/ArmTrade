@@ -6,7 +6,12 @@
         ←
       </button>
       <span class="nav-logo" (click)="goBack()">ArmTrade</span>
-      <span class="nav-ticker">{{ ticker | uppercase }}</span>
+      <div class="ticker-wrapper">
+        <span class="nav-ticker">{{ ticker | uppercase }}</span>
+        <button class="watchlist-star" (click)="toggleWatchlist()" [title]="isInWatchlist ? 'Remove from Watchlist' : 'Add to Watchlist'">
+          <i class="pi" [ngClass]="isInWatchlist ? 'pi-star-fill active' : 'pi-star'"></i>
+        </button>
+      </div>
     </div>
     <div class="top-bar-search">
       <p-autoComplete

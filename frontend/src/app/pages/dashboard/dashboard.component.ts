@@ -1,5 +1,5 @@
 import { Component, OnInit, ElementRef, ViewChild, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CardModule } from 'primeng/card';
@@ -14,6 +14,8 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { createChart, IChartApi, CandlestickSeries } from 'lightweight-charts';
 import { StockService, ArmandAnalysis, Annotation, SearchResult } from '../../services/stock.service';
+import { AuthService } from '../../services/auth.service';
+import { WatchlistService } from '../../services/watchlist.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -38,6 +40,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   loadingNews: boolean = true;
   dividends: any[] = [];
   loadingDividends: boolean = true;
+  isInWatchlist: boolean = false;
+  isLoggedIn: boolean = false;
 
   // Fundamentals dialog
   showFundamentalsDialog: boolean = false;
@@ -85,9 +89,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   constructor(
     private route: ActivatedRoute,
+    private stockService: StockService,
+    private authService: AuthService,
+    private watchlistService: WatchlistService,
     private router: Router,
-    private stockService: StockService
-  ) {}
+    private location: Location
+  ) {
+    this.isLoggedIn = this.authService.isLoggedIn();
+  }
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
@@ -107,7 +116,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   goBack() {
-    this.router.navigate(['/']);
+    this.location.back();
   }
 
   onSearchComplete(event: any) {
@@ -162,6 +171,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.loadingFundamentals = true;
     this.loadingNews = true;
     this.loadingDividends = true;
+    this.checkWatchlist();
     // Reset AI state — user must request it
     this.loadingAnalysis = false;
     this.analysisRequested = false;
@@ -346,5 +356,30 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   abs(val: number): number {
     return Math.abs(val);
+  }
+
+  toggleWatchlist() {
+    if (!this.isLoggedIn) {
+      this.router.navigate(['/login']);
+      return;
+    }
+    if (this.isInWatchlist) {
+      this.watchlistService.removeFromWatchlist(this.ticker).subscribe({
+        next: () => this.isInWatchlist = false
+      });
+    } else {
+      this.watchlistService.addToWatchlist(this.ticker).subscribe({
+        next: () => this.isInWatchlist = true
+      });
+    }
+  }
+
+  private checkWatchlist() {
+    if (!this.isLoggedIn) return;
+    this.watchlistService.getWatchlist().subscribe({
+      next: (items) => {
+        this.isInWatchlist = items.some(i => i.ticker === this.ticker);
+      }
+    });
   }
 }

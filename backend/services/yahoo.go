@@ -121,3 +121,8 @@ func (s *YahooFinanceService) makeRequest(url string, useCrumb bool) (map[string
 
 	return result, nil
 }
+
+// MakeRawRequest exposes makeRequest for other packages (e.g., market handlers)
+func (s *YahooFinanceService) MakeRawRequest(url string) (map[string]interface{}, error) {
+	return s.makeRequest(url, false)
+}

@@ -15,15 +15,36 @@ var armandService = services.NewArmandService(yahooService)
 func SetupRoutes(r *gin.Engine) {
 	api := r.Group("/api")
 	{
+		// Public routes
 		api.GET("/search", handleSearch)
 		api.GET("/chart/:ticker", handleGetChart)
 		api.GET("/fundamentals/:ticker", handleGetFundamentals)
 		api.GET("/news/:ticker", handleGetNews)
 		api.GET("/dividends/:ticker", handleGetDividends)
 
-		// Armand AI endpoints
+		// Auth routes (public)
+		api.POST("/auth/register", handleRegister)
+		api.POST("/auth/login", handleLogin)
+
+		// Armand AI endpoints (public)
 		api.POST("/armand/analyze", handleArmandAnalysis)
 		api.POST("/armand/screener", handleScreener)
+		api.POST("/armand/compare", handleCompareStocks)
+		api.POST("/armand/earnings", handleSummarizeEarnings)
+
+		// Market discovery (public)
+		api.GET("/market/sectors", handleGetSectors)
+		api.GET("/market/macro", handleGetMacro)
+		api.GET("/market/movers", handleGetMovers)
+
+		// Protected routes (require JWT)
+		protected := api.Group("/")
+		protected.Use(AuthMiddleware())
+		{
+			protected.GET("/watchlist", handleGetWatchlist)
+			protected.POST("/watchlist", handleAddWatchlist)
+			protected.DELETE("/watchlist/:ticker", handleDeleteWatchlist)
+		}
 	}
 }
 
@@ -101,6 +122,44 @@ func handleScreener(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, results)
+}
+
+func handleCompareStocks(c *gin.Context) {
+	var req struct {
+		Ticker1 string `json:"ticker1" binding:"required"`
+		Ticker2 string `json:"ticker2" binding:"required"`
+	}
+	if err := c.BindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Two tickers are required"})
+		return
+	}
+
+	result, err := armandService.CompareStocks(req.Ticker1, req.Ticker2)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, result)
+}
+
+func handleSummarizeEarnings(c *gin.Context) {
+	var req struct {
+		Transcript string `json:"transcript" binding:"required"`
+		Ticker     string `json:"ticker"`
+	}
+	if err := c.BindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Transcript text is required"})
+		return
+	}
+
+	result, err := armandService.SummarizeEarnings(req.Transcript, req.Ticker)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, result)
 }
 
 type NewsResponseItem struct {

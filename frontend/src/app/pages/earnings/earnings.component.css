@@ -1,0 +1,47 @@
+.earnings-page { min-height: 100vh; background: #0a0e1a; }
+
+.top-bar { display: flex; align-items: center; padding: 0.75rem 2rem; background: rgba(10, 14, 26, 0.95); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(99, 102, 241, 0.08); position: sticky; top: 0; z-index: 100; }
+.top-bar-left { display: flex; align-items: center; gap: 0.75rem; }
+.back-btn { background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.2); color: #818cf8; width: 36px; height: 36px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; transition: all 0.2s; }
+.back-btn:hover { background: rgba(99, 102, 241, 0.2); }
+.nav-logo { font-weight: 800; font-size: 1.2rem; background: linear-gradient(135deg, #818cf8, #38bdf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; cursor: pointer; }
+.nav-ticker { font-weight: 700; font-size: 0.95rem; color: #e2e8f0; padding: 0.2rem 0.6rem; background: rgba(99, 102, 241, 0.1); border-radius: 6px; border: 1px solid rgba(99, 102, 241, 0.15); }
+
+.earnings-content { padding: 2rem; max-width: 800px; margin: 0 auto; }
+
+.glass-card { background: rgba(19, 25, 41, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(99, 102, 241, 0.1); border-radius: 16px; padding: 1.5rem; }
+
+.input-card h2 { margin: 0 0 0.25rem 0; color: #f1f5f9; font-size: 1.3rem; }
+.input-card .subtitle { margin: 0 0 1.5rem 0; color: #64748b; font-size: 0.85rem; }
+
+.form-group { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1.25rem; }
+.form-group label { font-size: 0.75rem; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; }
+
+.ticker-input { background: rgba(10, 14, 26, 0.7); border: 1px solid rgba(99, 102, 241, 0.15); border-radius: 10px; color: #e2e8f0; padding: 0.65rem 1rem; font-size: 0.9rem; font-family: 'Inter', sans-serif; width: 150px; outline: none; transition: border-color 0.2s; }
+.ticker-input:focus { border-color: #6366f1; }
+
+.file-upload-wrapper { display: flex; align-items: center; gap: 1rem; position: relative; }
+.file-input { opacity: 0; position: absolute; z-index: -1; width: 0.1px; height: 0.1px; }
+.file-label { display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(99, 102, 241, 0.1); border: 1px dashed rgba(99, 102, 241, 0.3); padding: 0.65rem 1.25rem; border-radius: 10px; color: #818cf8; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.file-label:hover { background: rgba(99, 102, 241, 0.15); border-color: rgba(99, 102, 241, 0.5); }
+.error-msg { color: #f87171; font-size: 0.8rem; }
+
+.transcript-input { background: rgba(10, 14, 26, 0.7); border: 1px solid rgba(99, 102, 241, 0.15); border-radius: 10px; color: #e2e8f0; padding: 0.75rem 1rem; font-size: 0.85rem; font-family: 'Inter', sans-serif; width: 100%; resize: vertical; outline: none; transition: border-color 0.2s; box-sizing: border-box; }
+.transcript-input:focus { border-color: #6366f1; }
+
+::ng-deep .summarize-btn { background: linear-gradient(135deg, #6366f1, #8b5cf6) !important; border: none !important; border-radius: 10px !important; font-weight: 600 !important; }
+
+.loading-state { margin-top: 1.5rem; }
+
+.results-card { margin-top: 1.5rem; }
+.results-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; }
+.results-header h3 { margin: 0; color: #f1f5f9; font-size: 1.1rem; }
+
+.key-points h4, .outlook-section h4, .risks-section h4 { margin: 0 0 0.5rem 0; color: #818cf8; font-size: 0.9rem; }
+.key-points ul, .risks-section ul { padding-left: 1.25rem; margin: 0 0 1.25rem 0; }
+.key-points li, .risks-section li { color: #94a3b8; font-size: 0.875rem; line-height: 1.6; margin-bottom: 0.4rem; }
+
+.outlook-section { margin-bottom: 1.25rem; }
+.outlook-section p { margin: 0; color: #cbd5e1; font-size: 0.9rem; line-height: 1.5; }
+
+.risks-section li { color: #fbbf24; }

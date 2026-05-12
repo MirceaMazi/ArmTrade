@@ -1,7 +1,18 @@
 <div class="home-container">
-  <!-- Animated background particles -->
+  <!-- Animated background -->
   <div class="bg-gradient"></div>
   <div class="bg-grid"></div>
+
+  <!-- User Area (top right) -->
+  <div class="user-area animate-fade-in">
+    <div *ngIf="!isLoggedIn" class="login-link" (click)="openLogin()">
+      <i class="pi pi-sign-in"></i> Sign In
+    </div>
+    <div *ngIf="isLoggedIn" class="user-info">
+      <span class="user-badge"><i class="pi pi-user"></i> {{ username }}</span>
+      <button class="logout-btn" (click)="logout()">Logout</button>
+    </div>
+  </div>
 
   <div class="search-wrapper animate-fade-in-up">
     <div class="logo-glow"></div>
@@ -32,14 +43,46 @@
       </p-autoComplete>
     </div>
 
-    <div class="home-actions">
-      <p-button
-        label="AI Stock Screener"
-        icon="pi pi-sparkles"
-        [text]="true"
-        (onClick)="openScreener()"
-        styleClass="screener-btn"
-      ></p-button>
+    <!-- Feature Cards Grid -->
+    <div class="features-grid">
+      <div class="feature-card" (click)="openMarket()">
+        <span class="feature-icon">📊</span>
+        <span class="feature-label">Market Overview</span>
+      </div>
+      <div class="feature-card" (click)="openScreener()">
+        <span class="feature-icon">✦</span>
+        <span class="feature-label">AI Screener</span>
+      </div>
+      <div class="feature-card" (click)="openCompare()">
+        <span class="feature-icon">⚖️</span>
+        <span class="feature-label">Compare Stocks</span>
+      </div>
+      <div class="feature-card" (click)="openEarnings()">
+        <span class="feature-icon">📋</span>
+        <span class="feature-label">Earnings Summary</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Watchlist Panel (below main card, only if logged in) -->
+  <div *ngIf="isLoggedIn" class="watchlist-panel animate-fade-in-up" style="animation-delay: 0.1s">
+    <h3 class="watchlist-title">⭐ Your Watchlist</h3>
+    <div *ngIf="loadingWatchlist" class="watchlist-loading">
+      <p-skeleton width="100%" height="2.5rem" borderRadius="8px"></p-skeleton>
+      <p-skeleton width="100%" height="2.5rem" borderRadius="8px"></p-skeleton>
+    </div>
+    <div *ngIf="!loadingWatchlist && watchlist.length === 0" class="watchlist-empty">
+      <p>No stocks in your watchlist yet. Open a stock dashboard and click ⭐ to add one!</p>
+    </div>
+    <div *ngIf="!loadingWatchlist && watchlist.length > 0" class="watchlist-items">
+      <div class="watchlist-item" *ngFor="let item of watchlist" (click)="openDashboard(item.ticker)">
+        <span class="wl-ticker">{{ item.ticker }}</span>
+        <span class="wl-price">{{ item.price | number:'1.2-2' }}</span>
+        <span class="wl-change" [class.positive]="item.change >= 0" [class.negative]="item.change < 0">
+          {{ item.change >= 0 ? '+' : '' }}{{ item.change | number:'1.2-2' }}%
+        </span>
+        <button class="wl-remove" (click)="removeFromWatchlist(item.ticker); $event.stopPropagation()">✕</button>
+      </div>
     </div>
   </div>
 </div>

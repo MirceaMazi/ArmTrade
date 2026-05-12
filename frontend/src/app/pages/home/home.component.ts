@@ -4,12 +4,15 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { ButtonModule } from 'primeng/button';
+import { SkeletonModule } from 'primeng/skeleton';
 import { StockService, SearchResult } from '../../services/stock.service';
+import { AuthService } from '../../services/auth.service';
+import { WatchlistService, WatchlistItem } from '../../services/watchlist.service';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, FormsModule, AutoCompleteModule, ButtonModule],
+  imports: [CommonModule, FormsModule, AutoCompleteModule, ButtonModule, SkeletonModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
@@ -18,9 +21,48 @@ export class HomeComponent implements OnInit {
   results: SearchResult[] = [];
   selectedStock: any;
 
-  constructor(private stockService: StockService, private router: Router) {}
+  isLoggedIn = false;
+  username = '';
+  watchlist: WatchlistItem[] = [];
+  loadingWatchlist = false;
 
-  ngOnInit(): void {}
+  constructor(
+    private stockService: StockService,
+    private authService: AuthService,
+    private watchlistService: WatchlistService,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    this.authService.isLoggedIn$.subscribe(val => {
+      this.isLoggedIn = val;
+      if (val) {
+        this.loadWatchlist();
+      } else {
+        this.watchlist = [];
+      }
+    });
+    this.authService.username$.subscribe(val => this.username = val);
+  }
+
+  loadWatchlist() {
+    this.loadingWatchlist = true;
+    this.watchlistService.getWatchlist().subscribe({
+      next: (res) => {
+        this.watchlist = res;
+        this.loadingWatchlist = false;
+      },
+      error: () => this.loadingWatchlist = false
+    });
+  }
+
+  removeFromWatchlist(ticker: string) {
+    this.watchlistService.removeFromWatchlist(ticker).subscribe({
+      next: () => {
+        this.watchlist = this.watchlist.filter(w => w.ticker !== ticker);
+      }
+    });
+  }
 
   search(event: any) {
     const term = event.query;
@@ -42,7 +84,11 @@ export class HomeComponent implements OnInit {
     }
   }
 
-  openScreener() {
-    this.router.navigate(['/screener']);
-  }
+  openScreener() { this.router.navigate(['/screener']); }
+  openCompare() { this.router.navigate(['/compare']); }
+  openEarnings() { this.router.navigate(['/earnings']); }
+  openMarket() { this.router.navigate(['/market']); }
+  openLogin() { this.router.navigate(['/login']); }
+  logout() { this.authService.logout(); }
+  openDashboard(ticker: string) { this.router.navigate(['/dashboard', ticker]); }
 }
