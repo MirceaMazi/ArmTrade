@@ -1,36 +1,52 @@
 package api
 
 import (
+	"context"
 	"net/http"
+	"regexp"
 	"sort"
+	"time"
 
+	"armtrade-backend/db"
+	"armtrade-backend/models"
 	"armtrade-backend/services"
 
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 var yahooService = services.NewYahooFinanceService()
 var armandService = services.NewArmandService(yahooService)
 
+var validTicker = regexp.MustCompile(`^[A-Za-z0-9.\-^=]{1,20}$`)
+
 func SetupRoutes(r *gin.Engine) {
 	api := r.Group("/api")
 	{
+		// Health check
+		api.GET("/health", handleHealth)
+
 		// Public routes
 		api.GET("/search", handleSearch)
-		api.GET("/chart/:ticker", handleGetChart)
-		api.GET("/fundamentals/:ticker", handleGetFundamentals)
-		api.GET("/news/:ticker", handleGetNews)
-		api.GET("/dividends/:ticker", handleGetDividends)
+		api.GET("/chart/:ticker", validateTicker(), handleGetChart)
+		api.GET("/fundamentals/:ticker", validateTicker(), handleGetFundamentals)
+		api.GET("/news/:ticker", validateTicker(), handleGetNews)
+		api.GET("/dividends/:ticker", validateTicker(), handleGetDividends)
 
 		// Auth routes (public)
 		api.POST("/auth/register", handleRegister)
 		api.POST("/auth/login", handleLogin)
 
-		// Armand AI endpoints (public)
-		api.POST("/armand/analyze", handleArmandAnalysis)
-		api.POST("/armand/screener", handleScreener)
-		api.POST("/armand/compare", handleCompareStocks)
-		api.POST("/armand/earnings", handleSummarizeEarnings)
+		// Armand AI endpoints (public, rate-limited)
+		armand := api.Group("/armand")
+		armand.Use(RateLimitMiddleware())
+		{
+			armand.POST("/analyze", handleArmandAnalysis)
+			armand.POST("/screener", handleScreener)
+			armand.POST("/compare", handleCompareStocks)
+			armand.POST("/earnings", handleSummarizeEarnings)
+		}
 
 		// Market discovery (public)
 		api.GET("/market/sectors", handleGetSectors)
@@ -43,9 +59,38 @@ func SetupRoutes(r *gin.Engine) {
 		{
 			protected.GET("/watchlist", handleGetWatchlist)
 			protected.POST("/watchlist", handleAddWatchlist)
-			protected.DELETE("/watchlist/:ticker", handleDeleteWatchlist)
+			protected.PUT("/watchlist/:id/portfolio", handleUpdatePortfolio)
+			protected.DELETE("/watchlist/:id", handleDeleteWatchlist)
+
+			// Saved analyses
+			protected.GET("/analyses", handleGetAnalyses)
+			protected.POST("/analyses", handleSaveAnalysis)
 		}
 	}
+}
+
+// validateTicker returns middleware that validates the :ticker URL param
+func validateTicker() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ticker := c.Param("ticker")
+		if !validTicker.MatchString(ticker) {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ticker format"})
+			c.Abort()
+			return
+		}
+		c.Next()
+	}
+}
+
+func handleHealth(c *gin.Context) {
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+
+	if err := db.Client.Ping(ctx, nil); err != nil {
+		c.JSON(http.StatusServiceUnavailable, gin.H{"status": "unhealthy", "error": "database unreachable"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"status": "healthy"})
 }
 
 func handleSearch(c *gin.Context) {
@@ -208,7 +253,7 @@ func handleGetNews(c *gin.Context) {
 
 	// 2. Analyze sentiment with Armand
 	analysis, err := armandService.AnalyzeNewsSentiment(newsItems)
-	
+
 	// 3. Combine results
 	var response []NewsResponseItem
 	for i, item := range newsItems {
@@ -218,7 +263,7 @@ func handleGetNews(c *gin.Context) {
 			sentiment = analysis[i].Sentiment
 			reason = analysis[i].Reason
 		}
-		
+
 		response = append(response, NewsResponseItem{
 			NewsItem:  item,
 			Sentiment: sentiment,
@@ -240,7 +285,7 @@ func handleGetDividends(c *gin.Context) {
 
 	// Navigate the response JSON: chart -> result -> [0] -> events -> dividends
 	var dividendsList []map[string]interface{}
-	
+
 	chart, ok := data["chart"].(map[string]interface{})
 	if ok {
 		result, ok := chart["result"].([]interface{})
@@ -275,4 +320,76 @@ func handleGetDividends(c *gin.Context) {
 	})
 
 	c.JSON(http.StatusOK, dividendsList)
+}
+
+// --- Saved Analyses ---
+
+func handleSaveAnalysis(c *gin.Context) {
+	userID, err := getUserObjectID(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid user ID"})
+		return
+	}
+
+	var req struct {
+		Ticker         string   `json:"ticker" binding:"required"`
+		Recommendation string   `json:"recommendation" binding:"required"`
+		Reasoning      []string `json:"reasoning" binding:"required"`
+		Persona        string   `json:"persona"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	analysis := models.SavedAnalysis{
+		UserID:         userID,
+		Ticker:         req.Ticker,
+		Recommendation: req.Recommendation,
+		Reasoning:      req.Reasoning,
+		Persona:        req.Persona,
+		PriceAtSave:    func() float64 { p, _ := getTickerPrice(req.Ticker); return p }(),
+		SavedAt:        time.Now(),
+	}
+
+	if _, err := db.Analyses().InsertOne(ctx, analysis); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save analysis"})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{"message": "Analysis saved"})
+}
+
+func handleGetAnalyses(c *gin.Context) {
+	userID, err := getUserObjectID(c)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid user ID"})
+		return
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	opts := options.Find().SetSort(bson.D{{Key: "saved_at", Value: -1}}).SetLimit(50)
+	cursor, err := db.Analyses().Find(ctx, bson.M{"user_id": userID}, opts)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch analyses"})
+		return
+	}
+	defer cursor.Close(ctx)
+
+	var analyses []models.SavedAnalysis
+	if err := cursor.All(ctx, &analyses); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to read analyses"})
+		return
+	}
+
+	if analyses == nil {
+		analyses = []models.SavedAnalysis{}
+	}
+
+	c.JSON(http.StatusOK, analyses)
 }

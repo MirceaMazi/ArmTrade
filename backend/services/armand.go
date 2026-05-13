@@ -53,9 +53,9 @@ type geminiResponse struct {
 }
 
 type AnalyzeRequest struct {
-	Ticker   string `json:"ticker"`
-	Persona  string `json:"persona"`
-	WhatIf   string `json:"whatIf"`
+	Ticker  string `json:"ticker"`
+	Persona string `json:"persona"`
+	WhatIf  string `json:"whatIf"`
 }
 
 func (s *ArmandService) Analyze(req *AnalyzeRequest) (*ArmandAnalysisResponse, error) {
@@ -110,71 +110,7 @@ func (s *ArmandService) Analyze(req *AnalyzeRequest) (*ArmandAnalysisResponse, e
 }`
 	promptWithSchema := prompt + "\n\nAlso, identify the 2-3 most significant price movement days from the chart data and provide annotations for them (date in YYYY-MM-DD, a brief description of why the move happened, and whether it was bullish/bearish/info).\n\nIMPORTANT: You must return the output strictly as a JSON object matching this schema:\n" + schema
 
-	reqBody := geminiRequest{}
-	reqBody.GenerationConfig.ResponseMimeType = "application/json"
-	reqBody.Contents = []struct {
-		Parts []struct {
-			Text string `json:"text"`
-		} `json:"parts"`
-	}{
-		{
-			Parts: []struct {
-				Text string `json:"text"`
-			}{
-				{Text: promptWithSchema},
-			},
-		},
-	}
-
-	jsonData, err := json.Marshal(reqBody)
-	if err != nil {
-		return nil, err
-	}
-
-	model := os.Getenv("GEMINI_MODEL")
-	if model == "" {
-		model = "gemini-2.5-flash"
-	}
-
-	url := fmt.Sprintf("https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s", model, apiKey)
-	resp, err := http.Post(url, "application/json", bytes.NewBuffer(jsonData))
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	bodyBytes, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("gemini api error: %d, %s", resp.StatusCode, string(bodyBytes))
-	}
-
-	var geminiResp geminiResponse
-	if err := json.Unmarshal(bodyBytes, &geminiResp); err != nil {
-		return nil, err
-	}
-
-	if len(geminiResp.Candidates) == 0 || len(geminiResp.Candidates[0].Content.Parts) == 0 {
-		return nil, fmt.Errorf("empty response from Gemini")
-	}
-
-	jsonString := geminiResp.Candidates[0].Content.Parts[0].Text
-
-	// Clean up markdown code blocks if the model accidentally includes them
-	jsonString = strings.TrimPrefix(jsonString, "```json")
-	jsonString = strings.TrimPrefix(jsonString, "```")
-	jsonString = strings.TrimSuffix(jsonString, "```")
-	jsonString = strings.TrimSpace(jsonString)
-
-	var analysis ArmandAnalysisResponse
-	if err := json.Unmarshal([]byte(jsonString), &analysis); err != nil {
-		return nil, fmt.Errorf("failed to parse AI response: %v, raw: %s", err, jsonString)
-	}
-
-	return &analysis, nil
+	return callGeminiForType[ArmandAnalysisResponse](apiKey, promptWithSchema)
 }
 
 // Screen handles natural language stock screening via Gemini
@@ -226,69 +162,7 @@ Also provide a brief summary of the screening results.
 IMPORTANT: You must return the output strictly as a JSON object matching this schema:
 %s`, query, schema)
 
-	reqBody := geminiRequest{}
-	reqBody.GenerationConfig.ResponseMimeType = "application/json"
-	reqBody.Contents = []struct {
-		Parts []struct {
-			Text string `json:"text"`
-		} `json:"parts"`
-	}{
-		{
-			Parts: []struct {
-				Text string `json:"text"`
-			}{
-				{Text: prompt},
-			},
-		},
-	}
-
-	jsonData, err := json.Marshal(reqBody)
-	if err != nil {
-		return nil, err
-	}
-
-	model := os.Getenv("GEMINI_MODEL")
-	if model == "" {
-		model = "gemini-2.5-flash"
-	}
-
-	url := fmt.Sprintf("https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s", model, apiKey)
-	resp, err := http.Post(url, "application/json", bytes.NewBuffer(jsonData))
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	bodyBytes, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("gemini api error: %d, %s", resp.StatusCode, string(bodyBytes))
-	}
-
-	var geminiResp geminiResponse
-	if err := json.Unmarshal(bodyBytes, &geminiResp); err != nil {
-		return nil, err
-	}
-
-	if len(geminiResp.Candidates) == 0 || len(geminiResp.Candidates[0].Content.Parts) == 0 {
-		return nil, fmt.Errorf("empty response from Gemini")
-	}
-
-	jsonString := geminiResp.Candidates[0].Content.Parts[0].Text
-	jsonString = strings.TrimPrefix(jsonString, "```json")
-	jsonString = strings.TrimPrefix(jsonString, "```")
-	jsonString = strings.TrimSuffix(jsonString, "```")
-	jsonString = strings.TrimSpace(jsonString)
-
-	var result ScreenerResponse
-	if err := json.Unmarshal([]byte(jsonString), &result); err != nil {
-		return nil, fmt.Errorf("failed to parse screener response: %v, raw: %s", err, jsonString)
-	}
-
-	return &result, nil
+	return callGeminiForType[ScreenerResponse](apiKey, prompt)
 }
 
 func (s *ArmandService) buildPrompt(req *AnalyzeRequest, fundamentals map[string]interface{}, chart map[string]interface{}) string {
@@ -360,91 +234,33 @@ func (s *ArmandService) AnalyzeNewsSentiment(newsItems []NewsItem) ([]NewsAnalys
 	}
 	promptBuilder.WriteString(fmt.Sprintf("\nIMPORTANT: You must return the output strictly as a JSON array of objects matching this schema:\n%s", schema))
 
-	reqBody := geminiRequest{}
-	reqBody.GenerationConfig.ResponseMimeType = "application/json"
-	reqBody.Contents = []struct {
-		Parts []struct {
-			Text string `json:"text"`
-		} `json:"parts"`
-	}{
-		{
-			Parts: []struct {
-				Text string `json:"text"`
-			}{
-				{Text: promptBuilder.String()},
-			},
-		},
-	}
-
-	jsonData, err := json.Marshal(reqBody)
-	if err != nil {
-		return defaultResponse, err
-	}
-
-	model := os.Getenv("GEMINI_MODEL")
-	if model == "" {
-		model = "gemini-2.5-flash"
-	}
-
-	url := fmt.Sprintf("https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s", model, apiKey)
-	resp, err := http.Post(url, "application/json", bytes.NewBuffer(jsonData))
-	if err != nil {
-		return defaultResponse, err
-	}
-	defer resp.Body.Close()
-
-	bodyBytes, err := io.ReadAll(resp.Body)
-	if err != nil || resp.StatusCode != 200 {
+	result, err := callGeminiForType[[]NewsAnalysisResponse](apiKey, promptBuilder.String())
+	if err != nil || result == nil || len(*result) != len(newsItems) {
 		return defaultResponse, nil
 	}
 
-	var geminiResp geminiResponse
-	if err := json.Unmarshal(bodyBytes, &geminiResp); err != nil {
-		return defaultResponse, err
-	}
-
-	if len(geminiResp.Candidates) == 0 || len(geminiResp.Candidates[0].Content.Parts) == 0 {
-		return defaultResponse, nil
-	}
-
-	jsonString := geminiResp.Candidates[0].Content.Parts[0].Text
-	jsonString = strings.TrimPrefix(jsonString, "```json")
-	jsonString = strings.TrimPrefix(jsonString, "```")
-	jsonString = strings.TrimSuffix(jsonString, "```")
-	jsonString = strings.TrimSpace(jsonString)
-
-	var analysis []NewsAnalysisResponse
-	if err := json.Unmarshal([]byte(jsonString), &analysis); err != nil {
-		return defaultResponse, err
-	}
-
-	// Make sure we return the exact number of responses as requested items
-	if len(analysis) != len(newsItems) {
-		return defaultResponse, nil
-	}
-
-	return analysis, nil
+	return *result, nil
 }
 
 // CompareStocks performs an AI-driven side-by-side comparison of two stocks
 type CompareResponse struct {
-	Winner     string   `json:"winner"`
-	Reasoning  []string `json:"reasoning"`
-	Ticker1    string   `json:"ticker1"`
-	Ticker2    string   `json:"ticker2"`
-	Summary1   string   `json:"summary1"`
-	Summary2   string   `json:"summary2"`
-	Verdict    string   `json:"verdict"`
+	Winner    string   `json:"winner"`
+	Reasoning []string `json:"reasoning"`
+	Ticker1   string   `json:"ticker1"`
+	Ticker2   string   `json:"ticker2"`
+	Summary1  string   `json:"summary1"`
+	Summary2  string   `json:"summary2"`
+	Verdict   string   `json:"verdict"`
 }
 
 func (s *ArmandService) CompareStocks(ticker1, ticker2 string) (*CompareResponse, error) {
 	apiKey := os.Getenv("GEMINI_API_KEY")
 	if apiKey == "" {
 		return &CompareResponse{
-			Winner:  "N/A",
+			Winner:    "N/A",
 			Reasoning: []string{"GEMINI_API_KEY not set."},
-			Ticker1: ticker1,
-			Ticker2: ticker2,
+			Ticker1:   ticker1,
+			Ticker2:   ticker2,
 		}, nil
 	}
 
@@ -605,4 +421,3 @@ func callGeminiForType[T any](apiKey, prompt string) (*T, error) {
 
 	return &result, nil
 }
-

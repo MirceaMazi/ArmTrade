@@ -1,15 +1,18 @@
 package api
 
 import (
+	"context"
 	"net/http"
-	"os"
 	"time"
 
+	"armtrade-backend/config"
 	"armtrade-backend/db"
 	"armtrade-backend/models"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -35,10 +38,18 @@ func handleRegister(c *gin.Context) {
 		return
 	}
 
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
 	// Check if username already exists
 	var existingUser models.User
-	if result := db.DB.Where("username = ?", req.Username).First(&existingUser); result.Error == nil {
+	err := db.Users().FindOne(ctx, bson.M{"username": req.Username}).Decode(&existingUser)
+	if err == nil {
 		c.JSON(http.StatusConflict, gin.H{"error": "Username already taken"})
+		return
+	}
+	if err != mongo.ErrNoDocuments {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
 		return
 	}
 
@@ -53,14 +64,18 @@ func handleRegister(c *gin.Context) {
 	user := models.User{
 		Username:     req.Username,
 		PasswordHash: string(hashedPassword),
+		CreatedAt:    time.Now(),
 	}
-	if result := db.DB.Create(&user); result.Error != nil {
+	result, err := db.Users().InsertOne(ctx, user)
+	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create user"})
 		return
 	}
 
+	user.ID = result.InsertedID.(bson.ObjectID)
+
 	// Generate JWT
-	token, err := generateToken(user.ID, user.Username)
+	token, err := generateToken(user.ID.Hex(), user.Username)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
 		return
@@ -79,9 +94,13 @@ func handleLogin(c *gin.Context) {
 		return
 	}
 
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
 	// Find user
 	var user models.User
-	if result := db.DB.Where("username = ?", req.Username).First(&user); result.Error != nil {
+	err := db.Users().FindOne(ctx, bson.M{"username": req.Username}).Decode(&user)
+	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid username or password"})
 		return
 	}
@@ -93,7 +112,7 @@ func handleLogin(c *gin.Context) {
 	}
 
 	// Generate JWT
-	token, err := generateToken(user.ID, user.Username)
+	token, err := generateToken(user.ID.Hex(), user.Username)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
 		return
@@ -105,12 +124,7 @@ func handleLogin(c *gin.Context) {
 	})
 }
 
-func generateToken(userID uint, username string) (string, error) {
-	secret := os.Getenv("JWT_SECRET")
-	if secret == "" {
-		secret = "armtrade-default-secret-change-me"
-	}
-
+func generateToken(userID string, username string) (string, error) {
 	claims := jwt.MapClaims{
 		"sub":      userID,
 		"username": username,
@@ -119,5 +133,5 @@ func generateToken(userID uint, username string) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString([]byte(secret))
+	return token.SignedString([]byte(config.JWTSecret()))
 }

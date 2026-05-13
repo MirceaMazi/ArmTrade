@@ -580,6 +580,44 @@
   font-size: 0.8rem;
 }
 
+/* ─── Save Analysis ─── */
+.save-analysis-row {
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+::ng-deep .save-btn {
+  background: rgba(99, 102, 241, 0.15) !important;
+  border: 1px solid rgba(99, 102, 241, 0.3) !important;
+  color: #a5b4fc !important;
+  font-size: 0.85rem !important;
+}
+
+::ng-deep .save-btn:hover {
+  background: rgba(99, 102, 241, 0.25) !important;
+}
+
+.saved-label {
+  color: #34d399;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+::ng-deep .export-pdf-btn {
+  background: rgba(239, 68, 68, 0.12) !important;
+  border: 1px solid rgba(239, 68, 68, 0.3) !important;
+  color: #f87171 !important;
+  font-size: 0.85rem !important;
+}
+
+::ng-deep .export-pdf-btn:hover {
+  background: rgba(239, 68, 68, 0.22) !important;
+}
+
 /* ─── Dialog Fundamentals ─── */
 .dialog-fundamentals-grid {
   display: grid;

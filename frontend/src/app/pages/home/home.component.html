@@ -67,6 +67,21 @@
   <!-- Watchlist Panel (below main card, only if logged in) -->
   <div *ngIf="isLoggedIn" class="watchlist-panel animate-fade-in-up" style="animation-delay: 0.1s">
     <h3 class="watchlist-title">⭐ Your Watchlist</h3>
+
+    <!-- Portfolio Summary -->
+    <div *ngIf="hasPortfolioData()" class="portfolio-summary">
+      <div class="portfolio-stat">
+        <span class="ps-label">Portfolio Value</span>
+        <span class="ps-value">{{ getTotalPortfolioValue() | number:'1.2-2' }}</span>
+      </div>
+      <div class="portfolio-stat">
+        <span class="ps-label">Total P&amp;L</span>
+        <span class="ps-value" [class.positive]="getTotalPnL() >= 0" [class.negative]="getTotalPnL() < 0">
+          {{ getTotalPnL() >= 0 ? '+' : '' }}{{ getTotalPnL() | number:'1.2-2' }}
+        </span>
+      </div>
+    </div>
+
     <div *ngIf="loadingWatchlist" class="watchlist-loading">
       <p-skeleton width="100%" height="2.5rem" borderRadius="8px"></p-skeleton>
       <p-skeleton width="100%" height="2.5rem" borderRadius="8px"></p-skeleton>
@@ -75,14 +90,108 @@
       <p>No stocks in your watchlist yet. Open a stock dashboard and click ⭐ to add one!</p>
     </div>
     <div *ngIf="!loadingWatchlist && watchlist.length > 0" class="watchlist-items">
+      <!-- Column headers -->
+      <div class="watchlist-header">
+        <span class="wh-ticker">Ticker</span>
+        <span class="wh-price">Price</span>
+        <span class="wh-change">Day Chg%</span>
+        <span class="wh-pnl">P&amp;L</span>
+        <span class="wh-actions"></span>
+      </div>
       <div class="watchlist-item" *ngFor="let item of watchlist" (click)="openDashboard(item.ticker)">
         <span class="wl-ticker">{{ item.ticker }}</span>
         <span class="wl-price">{{ item.price | number:'1.2-2' }}</span>
         <span class="wl-change" [class.positive]="item.change >= 0" [class.negative]="item.change < 0">
           {{ item.change >= 0 ? '+' : '' }}{{ item.change | number:'1.2-2' }}%
         </span>
-        <button class="wl-remove" (click)="removeFromWatchlist(item.ticker); $event.stopPropagation()">✕</button>
+        <span *ngIf="getPnL(item) !== null" class="wl-pnl" [class.positive]="getPnL(item)! >= 0" [class.negative]="getPnL(item)! < 0">
+          {{ getPnL(item)! >= 0 ? '+' : '' }}{{ getPnL(item)! | number:'1.2-2' }}
+          ({{ getPnLPercent(item)! >= 0 ? '+' : '' }}{{ getPnLPercent(item)! | number:'1.1-1' }}%)
+        </span>
+        <span *ngIf="getPnL(item) === null" class="wl-pnl wl-pnl-empty">—</span>
+        <div class="wl-actions">
+          <button class="wl-portfolio-btn" title="Edit portfolio" (click)="openPortfolioDialog(item); $event.stopPropagation()">📝</button>
+          <button class="wl-remove" (click)="removeFromWatchlist(item.id); $event.stopPropagation()">✕</button>
+        </div>
       </div>
     </div>
   </div>
+
+  <!-- Portfolio Edit Dialog -->
+  <p-dialog header="Edit Portfolio — {{ editingTicker }}" [(visible)]="portfolioDialogVisible" [modal]="true" [style]="{'width': '380px'}" [contentStyle]="{'background': '#0f172a', 'color': '#f1f5f9'}">
+    <div class="portfolio-form">
+      <div class="pf-field">
+        <label>Buy Price</label>
+        <p-inputNumber [(ngModel)]="editBuyPrice" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="4" placeholder="0.00"></p-inputNumber>
+      </div>
+      <div class="pf-field">
+        <label>Quantity (Shares)</label>
+        <p-inputNumber [(ngModel)]="editQuantity" mode="decimal" [minFractionDigits]="0" [maxFractionDigits]="4" placeholder="0"></p-inputNumber>
+      </div>
+      <div class="pf-field">
+        <label>Buy Date</label>
+        <input type="date" [(ngModel)]="editBuyDate" class="pf-date-input" />
+      </div>
+      <button pButton label="Save" icon="pi pi-check" class="pf-save-btn" (click)="savePortfolio()"></button>
+    </div>
+  </p-dialog>
+
+  <!-- Saved Analyses Panel -->
+  <div *ngIf="isLoggedIn" class="saved-analyses-panel animate-fade-in-up" style="animation-delay: 0.15s">
+    <h3 class="watchlist-title">📊 Saved Analyses</h3>
+    <div *ngIf="loadingSavedAnalyses" class="watchlist-loading">
+      <p-skeleton width="100%" height="2.5rem" borderRadius="8px"></p-skeleton>
+      <p-skeleton width="100%" height="2.5rem" borderRadius="8px"></p-skeleton>
+    </div>
+    <div *ngIf="!loadingSavedAnalyses && savedAnalyses.length === 0" class="watchlist-empty">
+      <p>No saved analyses yet. Analyze a stock and click "Save Analysis" to keep it here!</p>
+    </div>
+    <div *ngIf="!loadingSavedAnalyses && savedAnalyses.length > 0" class="saved-analyses-list">
+      <div class="saved-analysis-item" *ngFor="let a of savedAnalyses" (click)="openAnalysisDialog(a)">
+        <span class="sa-ticker">{{ a.ticker }}</span>
+        <span class="sa-rec" [ngClass]="a.recommendation.toLowerCase()">{{ a.recommendation }}</span>
+        <span class="sa-persona">{{ a.persona }}</span>
+        <span class="sa-date">{{ a.savedAt | date:'shortDate' }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Analysis Detail Dialog -->
+  <p-dialog
+    *ngIf="selectedAnalysis"
+    header="{{ selectedAnalysis.ticker }} — Saved Analysis"
+    [(visible)]="analysisDialogVisible"
+    [modal]="true"
+    [style]="{'width': '540px', 'max-height': '80vh'}"
+    [contentStyle]="{'background': '#0f172a', 'color': '#f1f5f9', 'overflow-y': 'auto'}"
+  >
+    <div class="analysis-detail">
+      <div class="ad-meta">
+        <span class="ad-persona">{{ selectedAnalysis.persona }}</span>
+        <span class="ad-date">{{ selectedAnalysis.savedAt | date:'mediumDate' }}</span>
+      </div>
+
+      <div class="ad-price-row">
+        <span class="ad-price-label">Price when saved</span>
+        <span class="ad-price-value">{{ selectedAnalysis.priceAtSave | number:'1.2-2' }}</span>
+      </div>
+
+      <div class="ad-rec-row">
+        <span class="ad-rec-badge" [ngClass]="selectedAnalysis.recommendation.toLowerCase()">
+          {{ selectedAnalysis.recommendation }}
+        </span>
+      </div>
+
+      <div class="ad-section">
+        <h4>Reasoning</h4>
+        <ul class="ad-reasoning">
+          <li *ngFor="let r of selectedAnalysis.reasoning">{{ r }}</li>
+        </ul>
+      </div>
+
+      <div class="ad-footer">
+        <button pButton label="Open Dashboard" icon="pi pi-external-link" (click)="openDashboard(selectedAnalysis.ticker); analysisDialogVisible = false" class="ad-open-btn"></button>
+      </div>
+    </div>
+  </p-dialog>
 </div>

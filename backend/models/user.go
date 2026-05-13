@@ -3,14 +3,12 @@ package models
 import (
 	"time"
 
-	"gorm.io/gorm"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 type User struct {
-	ID           uint           `gorm:"primarykey" json:"id"`
-	Username     string         `gorm:"uniqueIndex;size:100;not null" json:"username"`
-	PasswordHash string         `gorm:"not null" json:"-"`
-	CreatedAt    time.Time      `json:"createdAt"`
-	UpdatedAt    time.Time      `json:"-"`
-	DeletedAt    gorm.DeletedAt `gorm:"index" json:"-"`
+	ID           bson.ObjectID `bson:"_id,omitempty" json:"id"`
+	Username     string        `bson:"username" json:"username"`
+	PasswordHash string        `bson:"password_hash" json:"-"`
+	CreatedAt    time.Time     `bson:"created_at" json:"createdAt"`
 }

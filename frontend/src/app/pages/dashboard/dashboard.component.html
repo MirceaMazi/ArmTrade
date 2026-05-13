@@ -307,6 +307,27 @@
               </div>
             </div>
           </div>
+
+          <div class="save-analysis-row">
+            <p-button
+              *ngIf="!analysisSaved"
+              label="Save Analysis"
+              icon="pi pi-save"
+              (onClick)="saveAnalysis()"
+              styleClass="save-btn"
+              [style]="{'margin-top': '1rem'}"
+            ></p-button>
+            <span *ngIf="analysisSaved" class="saved-label">
+              <i class="pi pi-check-circle"></i> Analysis saved
+            </span>
+            <p-button
+              label="Export PDF"
+              icon="pi pi-file-pdf"
+              (onClick)="exportAnalysisPDF()"
+              styleClass="export-pdf-btn"
+              [style]="{'margin-top': '1rem', 'margin-left': '0.5rem'}"
+            ></p-button>
+          </div>
         </div>
 
         <!-- Empty State -->

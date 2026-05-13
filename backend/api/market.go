@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 	"sync"
 
@@ -152,7 +153,7 @@ func handleGetMovers(c *gin.Context) {
 }
 
 func fetchScreener(scrID string, count int) []MoverItem {
-	url := "https://query1.finance.yahoo.com/v1/finance/screener/predefined/saved?formatted=true&lang=en-US&region=US&scrIds=" + scrID + "&count=5"
+	url := fmt.Sprintf("https://query1.finance.yahoo.com/v1/finance/screener/predefined/saved?formatted=true&lang=en-US&region=US&scrIds=%s&count=%d", scrID, count)
 	data, err := yahooService.MakeRawRequest(url)
 	if err != nil {
 		return []MoverItem{}

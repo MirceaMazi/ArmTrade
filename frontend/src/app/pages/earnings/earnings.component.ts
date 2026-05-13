@@ -45,8 +45,10 @@ export class EarningsComponent {
         this.transcript = await this.extractTextFromPDF(file);
       } else if (file.name.toLowerCase().endsWith('.docx')) {
         this.transcript = await this.extractTextFromDocx(file);
+      } else if (file.name.toLowerCase().endsWith('.html') || file.name.toLowerCase().endsWith('.htm')) {
+        this.transcript = await this.extractTextFromHTML(file);
       } else {
-        this.fileError = 'Unsupported file format. Please upload PDF or DOCX.';
+        this.fileError = 'Unsupported file format. Please upload PDF, DOCX, or HTML.';
       }
     } catch (err: any) {
       console.error(err);
@@ -74,6 +76,20 @@ export class EarningsComponent {
     const arrayBuffer = await file.arrayBuffer();
     const result = await mammoth.extractRawText({ arrayBuffer: arrayBuffer });
     return result.value;
+  }
+
+  private async extractTextFromHTML(file: File): Promise<string> {
+    const content = await file.text();
+    const parser = new DOMParser();
+    const htmlDoc = parser.parseFromString(content, 'text/html');
+    
+    // Remove script and style elements
+    const scripts = htmlDoc.querySelectorAll('script, style');
+    scripts.forEach(script => script.remove());
+    
+    // Get text content and normalize whitespace
+    const text = htmlDoc.body.textContent || '';
+    return text.replace(/\s+/g, ' ').trim();
   }
 
   summarize() {

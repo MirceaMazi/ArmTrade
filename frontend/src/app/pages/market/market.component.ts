@@ -3,6 +3,7 @@ import { CommonModule, DecimalPipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { SkeletonModule } from 'primeng/skeleton';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-market',
@@ -12,7 +13,7 @@ import { SkeletonModule } from 'primeng/skeleton';
   styleUrl: './market.component.css'
 })
 export class MarketComponent implements OnInit {
-  private apiUrl = 'http://localhost:8080/api/market';
+  private apiUrl = `${environment.apiUrl}/market`;
 
   sectors: any[] = [];
   movers: any = null;

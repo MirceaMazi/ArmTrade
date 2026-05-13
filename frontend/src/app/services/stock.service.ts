@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 export interface SearchResult {
   symbol: string;
@@ -28,6 +29,10 @@ export interface ArmandAnalysis {
   reasoning: string[];
   socialSentiment: 'Bullish' | 'Bearish' | 'Neutral';
   annotations: Annotation[];
+  confidence?: number;
+  targetPrice?: number;
+  horizon?: string;
+  risks?: string[];
 }
 
 export interface ScreenerResult {
@@ -45,13 +50,15 @@ export interface ScreenerResponse {
   providedIn: 'root'
 })
 export class StockService {
-  private apiUrl = 'http://localhost:8080/api';
+  private apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) { }
 
   searchStocks(query: string): Observable<SearchResult[]> {
     return this.http.get<any>(`${this.apiUrl}/search?q=${query}`).pipe(
-      map(response => response.quotes || [])
+      map(response => (response.quotes || []).filter(
+        (item: any) => item.quoteType === 'EQUITY' || item.quoteType === 'ETF'
+      ))
     );
   }
 
@@ -85,5 +92,13 @@ export class StockService {
 
   summarizeEarnings(transcript: string, ticker?: string): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/armand/earnings`, { transcript, ticker });
+  }
+
+  saveAnalysis(data: { ticker: string; recommendation: string; reasoning: string[]; persona: string }): Observable<any> {
+    return this.http.post(`${this.apiUrl}/analyses`, data);
+  }
+
+  getSavedAnalyses(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/analyses`);
   }
 }

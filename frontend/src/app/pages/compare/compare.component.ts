@@ -27,13 +27,13 @@ export class CompareComponent {
 
   search1(event: any) {
     this.stockService.searchStocks(event.query).subscribe({
-      next: (res) => this.results1 = res.filter((i: any) => i.quoteType === 'EQUITY' || i.quoteType === 'ETF')
+      next: (res) => this.results1 = res
     });
   }
 
   search2(event: any) {
     this.stockService.searchStocks(event.query).subscribe({
-      next: (res) => this.results2 = res.filter((i: any) => i.quoteType === 'EQUITY' || i.quoteType === 'ETF')
+      next: (res) => this.results2 = res
     });
   }
 

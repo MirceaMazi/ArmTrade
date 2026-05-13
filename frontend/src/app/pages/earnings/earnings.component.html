@@ -18,12 +18,12 @@
       </div>
 
       <div class="form-group file-upload-group">
-        <label>Upload Transcript (PDF or Word)</label>
+        <label>Upload Transcript (PDF, Word, or HTML)</label>
         <div class="file-upload-wrapper">
-          <input type="file" id="transcriptFile" (change)="onFileSelected($event)" accept=".pdf,.docx" class="file-input" />
+          <input type="file" id="transcriptFile" (change)="onFileSelected($event)" accept=".pdf,.docx,.html,.htm" class="file-input" />
           <label for="transcriptFile" class="file-label">
             <i class="pi" [ngClass]="parsingFile ? 'pi-spin pi-spinner' : 'pi-upload'"></i> 
-            {{ selectedFileName || 'Choose a PDF or DOCX file...' }}
+            {{ selectedFileName || 'Choose a PDF, DOCX, or HTML file...' }}
           </label>
           <span class="error-msg" *ngIf="fileError">{{ fileError }}</span>
         </div>

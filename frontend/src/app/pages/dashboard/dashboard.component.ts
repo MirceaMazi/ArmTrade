@@ -16,6 +16,7 @@ import { createChart, IChartApi, CandlestickSeries } from 'lightweight-charts';
 import { StockService, ArmandAnalysis, Annotation, SearchResult } from '../../services/stock.service';
 import { AuthService } from '../../services/auth.service';
 import { WatchlistService } from '../../services/watchlist.service';
+import jsPDF from 'jspdf';
 
 @Component({
   selector: 'app-dashboard',
@@ -41,7 +42,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   dividends: any[] = [];
   loadingDividends: boolean = true;
   isInWatchlist: boolean = false;
+  watchlistItemId: string = '';
   isLoggedIn: boolean = false;
+  analysisSaved: boolean = false;
 
   // Fundamentals dialog
   showFundamentalsDialog: boolean = false;
@@ -122,7 +125,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   onSearchComplete(event: any) {
     this.stockService.searchStocks(event.query).subscribe({
       next: (res) => {
-        this.searchResults = res.filter((item: any) => item.quoteType === 'EQUITY' || item.quoteType === 'ETF');
+        this.searchResults = res;
       },
       error: (err) => console.error(err)
     });
@@ -155,6 +158,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.loadingAnalysis = true;
     this.analysisRequested = true;
     this.armandAnalysis = null;
+    this.analysisSaved = false;
     
     // Find the current persona label
     const p = this.personas.find(p => p.value === this.selectedPersona);
@@ -363,13 +367,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.router.navigate(['/login']);
       return;
     }
-    if (this.isInWatchlist) {
-      this.watchlistService.removeFromWatchlist(this.ticker).subscribe({
-        next: () => this.isInWatchlist = false
+    if (this.isInWatchlist && this.watchlistItemId) {
+      this.watchlistService.removeFromWatchlist(this.watchlistItemId).subscribe({
+        next: () => { this.isInWatchlist = false; this.watchlistItemId = ''; }
       });
     } else {
       this.watchlistService.addToWatchlist(this.ticker).subscribe({
-        next: () => this.isInWatchlist = true
+        next: () => this.checkWatchlist()
       });
     }
   }
@@ -378,8 +382,133 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (!this.isLoggedIn) return;
     this.watchlistService.getWatchlist().subscribe({
       next: (items) => {
-        this.isInWatchlist = items.some(i => i.ticker === this.ticker);
+        const found = items.find(i => i.ticker === this.ticker);
+        this.isInWatchlist = !!found;
+        this.watchlistItemId = found?.id ?? '';
       }
     });
+  }
+
+  saveAnalysis() {
+    if (!this.isLoggedIn) {
+      this.router.navigate(['/login']);
+      return;
+    }
+    if (!this.armandAnalysis) return;
+
+    this.stockService.saveAnalysis({
+      ticker: this.ticker,
+      recommendation: this.armandAnalysis.recommendation,
+      reasoning: this.armandAnalysis.reasoning,
+      persona: this.currentPersonaLabel,
+    }).subscribe({
+      next: () => this.analysisSaved = true,
+      error: (err) => console.error('Failed to save analysis', err)
+    });
+  }
+
+  exportAnalysisPDF() {
+    if (!this.armandAnalysis) return;
+
+    const doc = new jsPDF();
+    const margin = 20;
+    let y = margin;
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const contentWidth = pageWidth - margin * 2;
+
+    // Title
+    doc.setFontSize(20);
+    doc.setFont('helvetica', 'bold');
+    doc.text(`${this.ticker} — AI Analysis`, margin, y);
+    y += 10;
+
+    // Persona + date
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(120);
+    doc.text(`Persona: ${this.currentPersonaLabel}  |  ${new Date().toLocaleDateString()}`, margin, y);
+    y += 12;
+
+    // Recommendation
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    const rec = this.armandAnalysis.recommendation.toUpperCase();
+    if (rec === 'BUY') { doc.setTextColor(34, 197, 94); }
+    else if (rec === 'SELL') { doc.setTextColor(239, 68, 68); }
+    else { doc.setTextColor(234, 179, 8); }
+    doc.text(`Recommendation: ${rec}`, margin, y);
+    y += 10;
+
+    // Confidence
+    doc.setTextColor(0);
+    doc.setFontSize(11);
+    doc.setFont('helvetica', 'normal');
+    if (this.armandAnalysis.confidence) {
+      doc.text(`Confidence: ${this.armandAnalysis.confidence}%`, margin, y);
+      y += 8;
+    }
+
+    // Target Price
+    if (this.armandAnalysis.targetPrice) {
+      doc.text(`Target Price: $${this.armandAnalysis.targetPrice}`, margin, y);
+      y += 8;
+    }
+
+    // Horizon
+    if (this.armandAnalysis.horizon) {
+      doc.text(`Horizon: ${this.armandAnalysis.horizon}`, margin, y);
+      y += 8;
+    }
+
+    y += 4;
+
+    // Reasoning
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Reasoning', margin, y);
+    y += 7;
+
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(40);
+    for (const reason of this.armandAnalysis.reasoning) {
+      const lines = doc.splitTextToSize(`• ${reason}`, contentWidth);
+      if (y + lines.length * 5 > doc.internal.pageSize.getHeight() - margin) {
+        doc.addPage();
+        y = margin;
+      }
+      doc.text(lines, margin, y);
+      y += lines.length * 5 + 3;
+    }
+
+    // Risks
+    if (this.armandAnalysis.risks && this.armandAnalysis.risks.length > 0) {
+      y += 4;
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(0);
+      doc.text('Risks', margin, y);
+      y += 7;
+
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(40);
+      for (const risk of this.armandAnalysis.risks) {
+        const lines = doc.splitTextToSize(`⚠ ${risk}`, contentWidth);
+        if (y + lines.length * 5 > doc.internal.pageSize.getHeight() - margin) {
+          doc.addPage();
+          y = margin;
+        }
+        doc.text(lines, margin, y);
+        y += lines.length * 5 + 3;
+      }
+    }
+
+    // Footer
+    doc.setFontSize(8);
+    doc.setTextColor(160);
+    doc.text('Generated by ArmTrade AI — Not financial advice', margin, doc.internal.pageSize.getHeight() - 10);
+
+    doc.save(`${this.ticker}-analysis-${new Date().toISOString().slice(0, 10)}.pdf`);
   }
 }
