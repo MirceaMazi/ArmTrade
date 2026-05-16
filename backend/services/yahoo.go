@@ -10,10 +10,16 @@ import (
 	"time"
 )
 
+type cachedResponse struct {
+	data      map[string]interface{}
+	expiresAt time.Time
+}
+
 type YahooFinanceService struct {
 	client *http.Client
 	crumb  string
 	mutex  sync.Mutex
+	cache  map[string]cachedResponse
 }
 
 func NewYahooFinanceService() *YahooFinanceService {
@@ -23,6 +29,7 @@ func NewYahooFinanceService() *YahooFinanceService {
 			Timeout: 10 * time.Second,
 			Jar:     jar,
 		},
+		cache: make(map[string]cachedResponse),
 	}
 	svc.refreshCrumb()
 	return svc
@@ -73,21 +80,51 @@ func (s *YahooFinanceService) GetDividends(ticker string) (map[string]interface{
 
 func (s *YahooFinanceService) GetChart(ticker, interval, trange string) (map[string]interface{}, error) {
 	url := fmt.Sprintf("https://query1.finance.yahoo.com/v8/finance/chart/%s?interval=%s&range=%s", ticker, interval, trange)
-	return s.makeRequest(url, false)
+	// Cache real-time price calls (1d/5d) for 60s to avoid hammering Yahoo
+	ttl := 5 * time.Minute
+	if trange == "5d" || trange == "1d" {
+		ttl = 60 * time.Second
+	}
+	res, err := s.cachedRequest(url, false, ttl)
+	if err != nil {
+		// Retry with refreshed crumb once
+		s.refreshCrumb()
+		return s.cachedRequest(url, false, ttl)
+	}
+	return res, nil
 }
 
 func (s *YahooFinanceService) GetFundamentals(ticker string) (map[string]interface{}, error) {
 	modules := "financialData,defaultKeyStatistics,assetProfile,summaryDetail,earnings"
 	url := fmt.Sprintf("https://query2.finance.yahoo.com/v10/finance/quoteSummary/%s?modules=%s&crumb=%s", ticker, modules, s.crumb)
-	
-	res, err := s.makeRequest(url, true)
+
+	res, err := s.cachedRequest(url, true, 5*time.Minute)
 	if err != nil || res == nil || res["quoteSummary"] == nil {
 		// Retry once if crumb expired
 		s.refreshCrumb()
 		url = fmt.Sprintf("https://query2.finance.yahoo.com/v10/finance/quoteSummary/%s?modules=%s&crumb=%s", ticker, modules, s.crumb)
-		return s.makeRequest(url, true)
+		return s.cachedRequest(url, true, 5*time.Minute)
 	}
 	return res, nil
+}
+
+func (s *YahooFinanceService) cachedRequest(url string, useCrumb bool, ttl time.Duration) (map[string]interface{}, error) {
+	s.mutex.Lock()
+	if entry, ok := s.cache[url]; ok && time.Now().Before(entry.expiresAt) {
+		s.mutex.Unlock()
+		return entry.data, nil
+	}
+	s.mutex.Unlock()
+
+	data, err := s.makeRequest(url, useCrumb)
+	if err != nil {
+		return nil, err
+	}
+
+	s.mutex.Lock()
+	s.cache[url] = cachedResponse{data: data, expiresAt: time.Now().Add(ttl)}
+	s.mutex.Unlock()
+	return data, nil
 }
 
 func (s *YahooFinanceService) makeRequest(url string, useCrumb bool) (map[string]interface{}, error) {
@@ -97,12 +134,25 @@ func (s *YahooFinanceService) makeRequest(url string, useCrumb bool) (map[string
 	}
 
 	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
-	
+
 	resp, err := s.client.Do(req)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
+
+	// On rate limit, wait briefly and retry once
+	if resp.StatusCode == http.StatusTooManyRequests {
+		resp.Body.Close()
+		time.Sleep(2 * time.Second)
+		req2, _ := http.NewRequest("GET", url, nil)
+		req2.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)")
+		resp, err = s.client.Do(req2)
+		if err != nil {
+			return nil, err
+		}
+		defer resp.Body.Close()
+	}
 
 	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)

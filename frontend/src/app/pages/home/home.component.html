@@ -68,6 +68,12 @@
   <div *ngIf="isLoggedIn" class="watchlist-panel animate-fade-in-up" style="animation-delay: 0.1s">
     <h3 class="watchlist-title">⭐ Your Watchlist</h3>
 
+    <div class="watchlist-actions-bar">
+      <button class="add-position-btn" (click)="openAddPositionDialog()">
+        <i class="pi pi-plus"></i> Add Position
+      </button>
+    </div>
+
     <!-- Portfolio Summary -->
     <div *ngIf="hasPortfolioData()" class="portfolio-summary">
       <div class="portfolio-stat">
@@ -117,9 +123,29 @@
     </div>
   </div>
 
-  <!-- Portfolio Edit Dialog -->
-  <p-dialog header="Edit Portfolio — {{ editingTicker }}" [(visible)]="portfolioDialogVisible" [modal]="true" [style]="{'width': '380px'}" [contentStyle]="{'background': '#0f172a', 'color': '#f1f5f9'}">
+  <!-- Portfolio Edit / Add Dialog -->
+  <p-dialog [header]="portfolioDialogMode === 'add' ? 'Add Position' : 'Edit Position — ' + editingTicker" [(visible)]="portfolioDialogVisible" [modal]="true" [style]="{'width': '380px'}" [contentStyle]="{'background': '#0f172a', 'color': '#f1f5f9'}">
     <div class="portfolio-form">
+      <div *ngIf="portfolioDialogMode === 'add'" class="pf-field">
+        <label>Stock</label>
+        <p-autoComplete
+          [(ngModel)]="addTickerSelected"
+          [suggestions]="addTickerResults"
+          (completeMethod)="searchAddTicker($event)"
+          (onSelect)="onAddTickerSelect($event)"
+          field="symbol"
+          placeholder="Search ticker..."
+          [style]="{'width':'100%'}"
+          [inputStyle]="{'width':'100%', 'padding': '0.6rem 0.75rem', 'font-size': '0.9rem', 'border-radius': '8px', 'background': 'rgba(15, 23, 42, 0.8)', 'color': '#e2e8f0', 'border': '1px solid rgba(99, 102, 241, 0.2)'}"
+        >
+          <ng-template let-item pTemplate="item">
+            <div class="suggestion-item">
+              <span class="suggestion-ticker">{{ item.symbol }}</span>
+              <span class="suggestion-name">{{ item.shortname }}</span>
+            </div>
+          </ng-template>
+        </p-autoComplete>
+      </div>
       <div class="pf-field">
         <label>Buy Price</label>
         <p-inputNumber [(ngModel)]="editBuyPrice" mode="decimal" [minFractionDigits]="2" [maxFractionDigits]="4" placeholder="0.00"></p-inputNumber>
@@ -132,7 +158,7 @@
         <label>Buy Date</label>
         <input type="date" [(ngModel)]="editBuyDate" class="pf-date-input" />
       </div>
-      <button pButton label="Save" icon="pi pi-check" class="pf-save-btn" (click)="savePortfolio()"></button>
+      <button pButton [label]="portfolioDialogMode === 'add' ? 'Add Position' : 'Save'" icon="pi pi-check" class="pf-save-btn" (click)="savePortfolio()" [disabled]="portfolioDialogMode === 'add' && !editingTicker"></button>
     </div>
   </p-dialog>
 

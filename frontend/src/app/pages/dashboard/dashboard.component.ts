@@ -16,6 +16,7 @@ import { createChart, IChartApi, CandlestickSeries } from 'lightweight-charts';
 import { StockService, ArmandAnalysis, Annotation, SearchResult } from '../../services/stock.service';
 import { AuthService } from '../../services/auth.service';
 import { WatchlistService } from '../../services/watchlist.service';
+import { PriceWsService } from '../../services/price-ws.service';
 import jsPDF from 'jspdf';
 
 @Component({
@@ -45,6 +46,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
   watchlistItemId: string = '';
   isLoggedIn: boolean = false;
   analysisSaved: boolean = false;
+
+  // Live price from chart meta
+  currentPrice: number = 0;
+  previousClose: number = 0;
+  priceChange: number = 0;
+  priceChangePercent: number = 0;
+  private priceSub: any;
 
   // Fundamentals dialog
   showFundamentalsDialog: boolean = false;
@@ -95,6 +103,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private stockService: StockService,
     private authService: AuthService,
     private watchlistService: WatchlistService,
+    private priceWs: PriceWsService,
     private router: Router,
     private location: Location
   ) {
@@ -115,6 +124,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     if (this.chart) {
       this.chart.remove();
+    }
+    if (this.priceSub) {
+      this.priceSub.unsubscribe();
+    }
+    if (this.ticker) {
+      this.priceWs.unsubscribe([this.ticker]);
     }
   }
 
@@ -149,9 +164,23 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.chart.remove();
     }
     this.stockService.getChart(this.ticker, interval, range).subscribe({
-      next: (res) => this.renderChart(res),
+      next: (res) => {
+        this.extractPrice(res);
+        this.renderChart(res);
+      },
       error: (err) => console.error('Error fetching chart', err)
     });
+  }
+
+  private extractPrice(data: any) {
+    const meta = data?.chart?.result?.[0]?.meta;
+    if (!meta) return;
+    this.currentPrice = meta.regularMarketPrice ?? 0;
+    this.previousClose = meta.chartPreviousClose ?? meta.previousClose ?? 0;
+    if (this.previousClose > 0) {
+      this.priceChange = this.currentPrice - this.previousClose;
+      this.priceChangePercent = (this.priceChange / this.previousClose) * 100;
+    }
   }
 
   runAnalysis() {
@@ -184,8 +213,20 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.dividends = [];
 
     this.stockService.getChart(this.ticker, this.selectedInterval, this.selectedRange).subscribe({
-      next: (res) => this.renderChart(res),
+      next: (res) => {
+        this.extractPrice(res);
+        this.renderChart(res);
+      },
       error: (err) => console.error('Error fetching chart', err)
+    });
+
+    // Live price via WebSocket
+    if (this.priceSub) this.priceSub.unsubscribe();
+    this.priceSub = this.priceWs.subscribe([this.ticker]).subscribe(update => {
+      this.currentPrice = update.price;
+      this.previousClose = update.prevClose;
+      this.priceChange = update.change;
+      this.priceChangePercent = update.changePct;
     });
 
     this.stockService.getFundamentals(this.ticker).subscribe({

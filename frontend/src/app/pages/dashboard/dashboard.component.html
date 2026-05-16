@@ -41,7 +41,16 @@
       <div class="chart-section">
         <div class="glass-card">
           <div class="card-header">
-            <span class="card-title">Price Action</span>
+            <div class="chart-header-left">
+              <span class="card-title">Price Action</span>
+              <div class="live-price" *ngIf="currentPrice > 0">
+                <span class="lp-value">{{ currentPrice | number:'1.2-2' }}</span>
+                <span class="lp-change" [class.positive]="priceChange >= 0" [class.negative]="priceChange < 0">
+                  {{ priceChange >= 0 ? '+' : '' }}{{ priceChange | number:'1.2-2' }}
+                  ({{ priceChangePercent >= 0 ? '+' : '' }}{{ priceChangePercent | number:'1.2-2' }}%)
+                </span>
+              </div>
+            </div>
             <div class="range-buttons">
               <button
                 *ngFor="let r of chartRanges"

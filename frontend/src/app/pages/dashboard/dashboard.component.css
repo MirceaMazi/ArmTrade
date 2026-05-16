@@ -156,6 +156,33 @@
   gap: 0.5rem;
 }
 
+/* ─── Live Price ─── */
+.chart-header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.live-price {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.lp-value {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #f1f5f9;
+}
+
+.lp-change {
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.lp-change.positive { color: #4ade80; }
+.lp-change.negative { color: #f87171; }
+
 /* ─── Layout Grid ─── */
 .dashboard-grid {
   display: grid;

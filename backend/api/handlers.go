@@ -27,6 +27,9 @@ func SetupRoutes(r *gin.Engine) {
 		// Health check
 		api.GET("/health", handleHealth)
 
+		// WebSocket for live prices
+		api.GET("/ws/prices", handleWebSocket)
+
 		// Public routes
 		api.GET("/search", handleSearch)
 		api.GET("/chart/:ticker", validateTicker(), handleGetChart)

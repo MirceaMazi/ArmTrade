@@ -81,7 +81,10 @@ func handleAddWatchlist(c *gin.Context) {
 	}
 
 	var req struct {
-		Ticker string `json:"ticker" binding:"required"`
+		Ticker   string   `json:"ticker" binding:"required"`
+		BuyPrice *float64 `json:"buyPrice"`
+		Quantity *float64 `json:"quantity"`
+		BuyDate  *string  `json:"buyDate"`
 	}
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Ticker is required"})
@@ -92,9 +95,18 @@ func handleAddWatchlist(c *gin.Context) {
 	defer cancel()
 
 	item := models.WatchlistItem{
-		UserID:  userID,
-		Ticker:  req.Ticker,
-		AddedAt: time.Now(),
+		UserID:   userID,
+		Ticker:   req.Ticker,
+		AddedAt:  time.Now(),
+		BuyPrice: req.BuyPrice,
+		Quantity: req.Quantity,
+	}
+
+	if req.BuyDate != nil {
+		t, err := time.Parse("2006-01-02", *req.BuyDate)
+		if err == nil {
+			item.BuyDate = &t
+		}
 	}
 
 	if _, err := db.Watchlist().InsertOne(ctx, item); err != nil {

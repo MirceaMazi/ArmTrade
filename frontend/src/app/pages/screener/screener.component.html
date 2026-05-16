@@ -42,14 +42,33 @@
 
   <!-- Results -->
   <div *ngIf="!loading && results" class="results-section animate-fade-in">
-    <p class="summary-text">{{ results.summary }}</p>
+    <div class="results-header">
+      <p class="summary-text">{{ results.summary }}</p>
+      <button
+        *ngIf="canCompare()"
+        class="compare-selected-btn"
+        (click)="compareSelected()"
+      >
+        <i class="pi pi-arrows-h"></i> Compare Selected
+      </button>
+    </div>
 
     <div *ngFor="let stock of results.results" class="result-card">
-      <div class="result-item" (click)="openDashboard(stock.ticker)">
-        <span class="result-ticker">{{ stock.ticker }}</span>
-        <span class="result-name">{{ stock.name }}</span>
-        <span class="result-reason">{{ stock.reason }}</span>
-        <i class="pi pi-arrow-right result-arrow"></i>
+      <div class="result-item">
+        <button
+          class="select-btn"
+          [class.selected]="isSelected(stock.ticker)"
+          (click)="toggleSelection(stock.ticker); $event.stopPropagation()"
+          [title]="isSelected(stock.ticker) ? 'Deselect' : 'Select for comparison'"
+        >
+          <i [class]="isSelected(stock.ticker) ? 'pi pi-check-circle' : 'pi pi-circle'"></i>
+        </button>
+        <div class="result-content" (click)="openDashboard(stock.ticker)">
+          <span class="result-ticker">{{ stock.ticker }}</span>
+          <span class="result-name">{{ stock.name }}</span>
+          <span class="result-reason">{{ stock.reason }}</span>
+          <i class="pi pi-arrow-right result-arrow"></i>
+        </div>
       </div>
     </div>
   </div>

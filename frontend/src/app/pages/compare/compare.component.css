@@ -19,8 +19,31 @@
 
 ::ng-deep .compare-btn { background: linear-gradient(135deg, #6366f1, #8b5cf6) !important; border: none !important; border-radius: 10px !important; font-weight: 600 !important; }
 
+::ng-deep .ai-compare-btn { background: linear-gradient(135deg, #8b5cf6, #ec4899) !important; border: none !important; border-radius: 10px !important; font-weight: 600 !important; }
+
 .glass-card { background: rgba(19, 25, 41, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(99, 102, 241, 0.1); border-radius: 16px; padding: 1.5rem; }
 
+/* Fundamentals Section */
+.fundamentals-section { margin-top: 2rem; }
+.section-title { margin: 0 0 1.25rem 0; color: #e2e8f0; font-size: 1.1rem; font-weight: 700; }
+
+.fund-table { display: flex; flex-direction: column; gap: 0; }
+
+.fund-header { display: flex; padding: 0.75rem 1rem; background: rgba(99, 102, 241, 0.08); border-radius: 8px 8px 0 0; border-bottom: 1px solid rgba(99, 102, 241, 0.15); }
+.fund-header .fund-col { font-weight: 700; color: #818cf8; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; }
+
+.fund-row { display: flex; padding: 0.6rem 1rem; border-bottom: 1px solid rgba(255, 255, 255, 0.04); transition: background 0.15s; }
+.fund-row:hover { background: rgba(99, 102, 241, 0.04); }
+.fund-row:last-child { border-bottom: none; }
+
+.fund-col { flex: 1; display: flex; align-items: center; font-size: 0.875rem; color: #cbd5e1; }
+.metric-col { flex: 1.2; font-weight: 500; color: #94a3b8; }
+.value-col { flex: 1; justify-content: center; text-align: center; font-variant-numeric: tabular-nums; }
+
+.winner-cell { color: #4ade80; font-weight: 700; }
+.loser-cell { color: #94a3b8; }
+
+/* AI Comparison Results */
 .comparison-results { margin-top: 2rem; }
 
 .verdict-header { text-align: center; margin-bottom: 1.5rem; }
@@ -46,4 +69,5 @@
 @media (max-width: 768px) {
   .compare-inputs { flex-direction: column; }
   .summaries-grid { grid-template-columns: 1fr; }
+  .fund-header, .fund-row { font-size: 0.8rem; }
 }

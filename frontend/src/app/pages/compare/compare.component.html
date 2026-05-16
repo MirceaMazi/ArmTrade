@@ -55,14 +55,53 @@
     </div>
 
     <p-button
-      label="Compare with Armand AI"
-      icon="pi pi-sparkles"
-      (onClick)="compare()"
-      [loading]="loading"
+      label="Compare Fundamentals"
+      icon="pi pi-chart-bar"
+      (onClick)="loadFundamentals()"
+      [loading]="loadingFundamentals"
       [disabled]="!stock1?.symbol || !stock2?.symbol"
       styleClass="compare-btn"
       [style]="{'width':'100%', 'margin-top': '1.5rem'}"
     ></p-button>
+
+    <div *ngIf="loadingFundamentals" class="loading-state">
+      <p-skeleton width="100%" height="20rem" borderRadius="16px"></p-skeleton>
+    </div>
+
+    <!-- Fundamentals Comparison Table -->
+    <div *ngIf="fundamentals.length > 0" class="fundamentals-section glass-card">
+      <h3 class="section-title">Fundamentals Comparison</h3>
+      <div class="fund-table">
+        <div class="fund-header">
+          <span class="fund-col metric-col">Metric</span>
+          <span class="fund-col value-col">{{ stock1.symbol }}</span>
+          <span class="fund-col value-col">{{ stock2.symbol }}</span>
+        </div>
+        <div class="fund-row" *ngFor="let metric of fundamentals">
+          <span class="fund-col metric-col">{{ metric.label }}</span>
+          <span class="fund-col value-col"
+                [class.winner-cell]="getWinner(metric) === 'stock1'"
+                [class.loser-cell]="getWinner(metric) === 'stock2'">
+            {{ metric.value1 }}
+          </span>
+          <span class="fund-col value-col"
+                [class.winner-cell]="getWinner(metric) === 'stock2'"
+                [class.loser-cell]="getWinner(metric) === 'stock1'">
+            {{ metric.value2 }}
+          </span>
+        </div>
+      </div>
+
+      <!-- AI Compare Button (only shown after fundamentals) -->
+      <p-button
+        label="Analyse with Armand AI"
+        icon="pi pi-sparkles"
+        (onClick)="compare()"
+        [loading]="loading"
+        styleClass="ai-compare-btn"
+        [style]="{'width':'100%', 'margin-top': '1.5rem'}"
+      ></p-button>
+    </div>
 
     <div *ngIf="loading" class="loading-state">
       <p-skeleton width="100%" height="15rem" borderRadius="16px"></p-skeleton>

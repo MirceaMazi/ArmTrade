@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -7,9 +7,11 @@ import { ButtonModule } from 'primeng/button';
 import { SkeletonModule } from 'primeng/skeleton';
 import { DialogModule } from 'primeng/dialog';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { Subscription } from 'rxjs';
 import { StockService, SearchResult } from '../../services/stock.service';
 import { AuthService } from '../../services/auth.service';
 import { WatchlistService, WatchlistItem } from '../../services/watchlist.service';
+import { PriceWsService } from '../../services/price-ws.service';
 
 @Component({
   selector: 'app-home',
@@ -18,7 +20,7 @@ import { WatchlistService, WatchlistItem } from '../../services/watchlist.servic
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
   query: string = '';
   results: SearchResult[] = [];
   selectedStock: any;
@@ -29,14 +31,19 @@ export class HomeComponent implements OnInit {
   loadingWatchlist = false;
   savedAnalyses: any[] = [];
   loadingSavedAnalyses = false;
+  private priceSub: Subscription | null = null;
 
   // Portfolio dialog
   portfolioDialogVisible = false;
+  portfolioDialogMode: 'edit' | 'add' = 'edit';
   editingItemId = '';
   editingTicker = '';
   editBuyPrice: number | null = null;
   editQuantity: number | null = null;
   editBuyDate: string = '';
+  addTickerQuery = '';
+  addTickerResults: SearchResult[] = [];
+  addTickerSelected: any = null;
 
   // Analysis detail dialog
   analysisDialogVisible = false;
@@ -46,6 +53,7 @@ export class HomeComponent implements OnInit {
     private stockService: StockService,
     private authService: AuthService,
     private watchlistService: WatchlistService,
+    private priceWs: PriceWsService,
     private router: Router
   ) {}
 
@@ -63,12 +71,45 @@ export class HomeComponent implements OnInit {
     this.authService.username$.subscribe(val => this.username = val);
   }
 
+  ngOnDestroy(): void {
+    this.unsubscribePrices();
+  }
+
+  private unsubscribePrices() {
+    if (this.priceSub) {
+      this.priceSub.unsubscribe();
+      this.priceSub = null;
+    }
+    const tickers = this.watchlist.map(w => w.ticker);
+    if (tickers.length > 0) {
+      this.priceWs.unsubscribe(tickers);
+    }
+  }
+
+  private subscribeWatchlistPrices() {
+    this.unsubscribePrices();
+    const tickers = this.watchlist.map(w => w.ticker);
+    if (tickers.length === 0) return;
+
+    this.priceSub = this.priceWs.subscribeBatch(tickers).subscribe(updates => {
+      for (const update of updates) {
+        for (const item of this.watchlist) {
+          if (item.ticker === update.ticker) {
+            item.price = update.price;
+            item.change = update.changePct;
+          }
+        }
+      }
+    });
+  }
+
   loadWatchlist() {
     this.loadingWatchlist = true;
     this.watchlistService.getWatchlist().subscribe({
       next: (res) => {
         this.watchlist = res;
         this.loadingWatchlist = false;
+        this.subscribeWatchlistPrices();
       },
       error: () => this.loadingWatchlist = false
     });
@@ -122,6 +163,7 @@ export class HomeComponent implements OnInit {
   }
 
   openPortfolioDialog(item: WatchlistItem) {
+    this.portfolioDialogMode = 'edit';
     this.editingItemId = item.id;
     this.editingTicker = item.ticker;
     this.editBuyPrice = item.buyPrice ?? null;
@@ -130,18 +172,58 @@ export class HomeComponent implements OnInit {
     this.portfolioDialogVisible = true;
   }
 
-  savePortfolio() {
-    const data: any = {};
-    if (this.editBuyPrice != null) data.buyPrice = this.editBuyPrice;
-    if (this.editQuantity != null) data.quantity = this.editQuantity;
-    if (this.editBuyDate) data.buyDate = this.editBuyDate;
+  openAddPositionDialog() {
+    this.portfolioDialogMode = 'add';
+    this.editingItemId = '';
+    this.editingTicker = '';
+    this.editBuyPrice = null;
+    this.editQuantity = null;
+    this.editBuyDate = '';
+    this.addTickerQuery = '';
+    this.addTickerSelected = null;
+    this.portfolioDialogVisible = true;
+  }
 
-    this.watchlistService.updatePortfolio(this.editingItemId, data).subscribe({
-      next: () => {
-        this.portfolioDialogVisible = false;
-        this.loadWatchlist();
-      }
+  searchAddTicker(event: any) {
+    this.stockService.searchStocks(event.query).subscribe({
+      next: (res) => this.addTickerResults = res
     });
+  }
+
+  onAddTickerSelect(event: any) {
+    const selected = event.value || event;
+    if (selected?.symbol) {
+      this.editingTicker = selected.symbol;
+    }
+  }
+
+  savePortfolio() {
+    if (this.portfolioDialogMode === 'add') {
+      if (!this.editingTicker) return;
+      const portfolio: any = {};
+      if (this.editBuyPrice != null) portfolio.buyPrice = this.editBuyPrice;
+      if (this.editQuantity != null) portfolio.quantity = this.editQuantity;
+      if (this.editBuyDate) portfolio.buyDate = this.editBuyDate;
+
+      this.watchlistService.addToWatchlist(this.editingTicker, portfolio).subscribe({
+        next: () => {
+          this.portfolioDialogVisible = false;
+          this.loadWatchlist();
+        }
+      });
+    } else {
+      const data: any = {};
+      if (this.editBuyPrice != null) data.buyPrice = this.editBuyPrice;
+      if (this.editQuantity != null) data.quantity = this.editQuantity;
+      if (this.editBuyDate) data.buyDate = this.editBuyDate;
+
+      this.watchlistService.updatePortfolio(this.editingItemId, data).subscribe({
+        next: () => {
+          this.portfolioDialogVisible = false;
+          this.loadWatchlist();
+        }
+      });
+    }
   }
 
   openAnalysisDialog(analysis: any) {

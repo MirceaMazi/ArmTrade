@@ -25,8 +25,8 @@ export class WatchlistService {
     return this.http.get<WatchlistItem[]>(this.apiUrl);
   }
 
-  addToWatchlist(ticker: string): Observable<any> {
-    return this.http.post(this.apiUrl, { ticker });
+  addToWatchlist(ticker: string, portfolio?: { buyPrice?: number; quantity?: number; buyDate?: string }): Observable<any> {
+    return this.http.post(this.apiUrl, { ticker, ...portfolio });
   }
 
   removeFromWatchlist(id: string): Observable<any> {
