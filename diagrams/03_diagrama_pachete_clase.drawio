@@ -1,0 +1,233 @@
+<mxfile host="65bd71144e">
+    <diagram name="Diagrama de Pachete si Clase" id="class-diagram">
+        <mxGraphModel dx="1351" dy="866" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2200" pageHeight="1500" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title" value="&lt;b&gt;Diagrama de Pachete &amp;#351;i Clase &amp;mdash; ArmTrade&lt;/b&gt;" style="text;html=1;align=center;fontSize=22;fontStyle=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="300" y="20" width="1600" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="pkg_backend" value="&lt;b&gt;Backend &amp;mdash; Go / Gin&lt;/b&gt;" style="html=1;shape=folder;tabWidth=200;tabHeight=26;tabPosition=left;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=2;fontSize=16;fontStyle=1;verticalAlign=top;spacingTop=6;align=left;spacingLeft=16;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="80" width="900" height="1150" as="geometry"/>
+                </mxCell>
+                <mxCell id="cls_main" value="&lt;b&gt;main&lt;/b&gt;&lt;hr/&gt;Ini&amp;#539;ializare server Gin&lt;br/&gt;CORS, graceful shutdown&lt;br/&gt;&lt;i&gt;Port: 8080 (env PORT)&lt;/i&gt;" style="html=1;rounded=1;arcSize=8;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;align=left;spacingLeft=8;verticalAlign=top;spacingTop=5;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="140" width="210" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="cls_config" value="&lt;b&gt;config.AppConfig&lt;/b&gt;&lt;hr/&gt;JWTSecret, CORSOrigin&lt;br/&gt;Port, GeminiAPIKey, GeminiModel&lt;br/&gt;&lt;i&gt;+ Load() : AppConfig&lt;/i&gt;" style="html=1;rounded=1;arcSize=8;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;align=left;spacingLeft=8;verticalAlign=top;spacingTop=5;" parent="1" vertex="1">
+                    <mxGeometry x="295" y="140" width="240" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="cls_db" value="&lt;b&gt;db.Database&lt;/b&gt;&lt;hr/&gt;client : *mongo.Client&lt;br/&gt;Colec&amp;#539;ii: users, watchlist, analyses&lt;br/&gt;&lt;i&gt;+ Connect() + Disconnect() + Ping()&lt;/i&gt;" style="html=1;rounded=1;arcSize=8;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;align=left;spacingLeft=8;verticalAlign=top;spacingTop=5;" parent="1" vertex="1">
+                    <mxGeometry x="560" y="140" width="250" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="pkg_models" value="&lt;b&gt;Pachet: models&lt;/b&gt;" style="html=1;shape=folder;tabWidth=130;tabHeight=20;tabPosition=left;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=2;fontSize=13;fontStyle=1;verticalAlign=top;spacingTop=5;align=left;spacingLeft=10;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="265" width="840" height="220" as="geometry"/>
+                </mxCell>
+                <mxCell id="cls_user" value="&lt;b&gt;User&lt;/b&gt;&lt;hr/&gt;ID : ObjectID&lt;br/&gt;Username : string (unic)&lt;br/&gt;PasswordHash : string&lt;br/&gt;CreatedAt : time.Time" style="html=1;rounded=1;arcSize=8;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;align=left;spacingLeft=8;verticalAlign=top;spacingTop=5;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="310" width="210" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="cls_watchlistitem" value="&lt;b&gt;WatchlistItem&lt;/b&gt;&lt;hr/&gt;ID, UserID : ObjectID&lt;br/&gt;Ticker : string&lt;br/&gt;BuyPrice, Quantity : *float64&lt;br/&gt;AddedAt : time.Time" style="html=1;rounded=1;arcSize=8;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;align=left;spacingLeft=8;verticalAlign=top;spacingTop=5;" parent="1" vertex="1">
+                    <mxGeometry x="320" y="310" width="220" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="cls_analysis" value="&lt;b&gt;SavedAnalysis&lt;/b&gt;&lt;hr/&gt;ID, UserID : ObjectID&lt;br/&gt;Ticker, Recommendation : string&lt;br/&gt;Reasoning : []string&lt;br/&gt;SavedAt : time.Time" style="html=1;rounded=1;arcSize=8;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;align=left;spacingLeft=8;verticalAlign=top;spacingTop=5;" parent="1" vertex="1">
+                    <mxGeometry x="570" y="310" width="220" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="m_rel1" value="1 : N" style="html=1;endArrow=open;endSize=10;strokeWidth=1.5;" parent="1" source="cls_user" target="cls_watchlistitem" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="m_rel2" value="1 : N" style="html=1;endArrow=open;endSize=10;strokeWidth=1.5;" parent="1" source="cls_user" target="cls_analysis" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="185" y="450"/>
+                            <mxPoint x="680" y="450"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="pkg_api" value="&lt;b&gt;Pachet: api&lt;/b&gt;" style="html=1;shape=folder;tabWidth=100;tabHeight=20;tabPosition=left;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;fontSize=13;fontStyle=1;verticalAlign=top;spacingTop=5;align=left;spacingLeft=10;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="515" width="840" height="370" as="geometry"/>
+                </mxCell>
+                <mxCell id="cls_handlers" value="&lt;b&gt;handlers.go&lt;/b&gt;&lt;hr/&gt;SetupRoutes(r *gin.Engine)&lt;br/&gt;handleSearch, handleChart&lt;br/&gt;handleFundamentals, handleNews&lt;br/&gt;handleArmand* (analyze, screen, compare, earnings)" style="html=1;rounded=1;arcSize=8;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;align=left;spacingLeft=8;verticalAlign=top;spacingTop=5;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="560" width="260" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="cls_auth" value="&lt;b&gt;auth.go&lt;/b&gt;&lt;hr/&gt;handleRegister()&lt;br/&gt;handleLogin()&lt;br/&gt;generateJWT(), bcrypt hash" style="html=1;rounded=1;arcSize=8;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;align=left;spacingLeft=8;verticalAlign=top;spacingTop=5;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="695" width="260" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="cls_middleware" value="&lt;b&gt;middleware.go&lt;/b&gt;&lt;hr/&gt;AuthMiddleware() &amp;mdash; validare JWT&lt;br/&gt;RateLimitMiddleware() &amp;mdash; 10 req/min/IP" style="html=1;rounded=1;arcSize=8;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;align=left;spacingLeft=8;verticalAlign=top;spacingTop=5;" parent="1" vertex="1">
+                    <mxGeometry x="370" y="560" width="260" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="cls_market" value="&lt;b&gt;market.go&lt;/b&gt;&lt;hr/&gt;handleGetSectors()&lt;br/&gt;handleGetMacro()&lt;br/&gt;handleGetMovers()" style="html=1;rounded=1;arcSize=8;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;align=left;spacingLeft=8;verticalAlign=top;spacingTop=5;" parent="1" vertex="1">
+                    <mxGeometry x="370" y="660" width="260" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="cls_watchlist_api" value="&lt;b&gt;watchlist.go&lt;/b&gt;&lt;hr/&gt;handleGetWatchlist()&lt;br/&gt;handleAddToWatchlist()&lt;br/&gt;handleRemoveFromWatchlist()&lt;br/&gt;handleSaveAnalysis(), handleGetAnalyses()" style="html=1;rounded=1;arcSize=8;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;align=left;spacingLeft=8;verticalAlign=top;spacingTop=5;" vertex="1" parent="1">
+                    <mxGeometry x="660" y="560" width="230" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="cls_ws" value="&lt;b&gt;ws.go &amp;mdash; WebSocket&lt;/b&gt;&lt;hr/&gt;handleWebSocket()&lt;br/&gt;broadcastLoop() &amp;mdash; 15s interval&lt;br/&gt;ping/pong &amp;mdash; 30s heartbeat" style="html=1;rounded=1;arcSize=8;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;align=left;spacingLeft=8;verticalAlign=top;spacingTop=5;" parent="1" vertex="1">
+                    <mxGeometry x="660" y="690" width="230" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="pkg_services" value="&lt;b&gt;Pachet: services&lt;/b&gt;" style="html=1;shape=folder;tabWidth=130;tabHeight=20;tabPosition=left;fillColor=#f8cecc;strokeColor=#b85450;strokeWidth=2;fontSize=13;fontStyle=1;verticalAlign=top;spacingTop=5;align=left;spacingLeft=10;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="920" width="840" height="270" as="geometry"/>
+                </mxCell>
+                <mxCell id="cls_yahoo" value="&lt;b&gt;YahooService&lt;/b&gt;&lt;hr/&gt;Search, GetChart, GetFundamentals&lt;br/&gt;GetNews, GetDividends&lt;br/&gt;Cache in-memory (TTL 60s&amp;ndash;5min)&lt;br/&gt;Anti-bot: crumb, cookie jar, User-Agent" style="html=1;rounded=1;arcSize=8;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;align=left;spacingLeft=8;verticalAlign=top;spacingTop=5;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="965" width="320" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="cls_armand" value="&lt;b&gt;ArmandService&lt;/b&gt;&lt;hr/&gt;Analyze, Screen, CompareStocks&lt;br/&gt;SummarizeEarnings, AnalyzeNewsSentiment&lt;br/&gt;callGeminiForType[T]() &amp;mdash; Go Generics&lt;br/&gt;Rate limit: 10 req/min/IP" style="html=1;rounded=1;arcSize=8;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;align=left;spacingLeft=8;verticalAlign=top;spacingTop=5;" parent="1" vertex="1">
+                    <mxGeometry x="440" y="965" width="320" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="svc_rel1" value="&lt;i&gt;folose&amp;#351;te&lt;/i&gt;" style="html=1;endArrow=open;endSize=10;dashed=1;strokeWidth=1.5;" parent="1" source="cls_armand" target="cls_yahoo" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="pkg_frontend" value="&lt;b&gt;Frontend &amp;mdash; Angular 19&lt;/b&gt;" style="html=1;shape=folder;tabWidth=200;tabHeight=26;tabPosition=left;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2;fontSize=16;fontStyle=1;verticalAlign=top;spacingTop=6;align=left;spacingLeft=16;" parent="1" vertex="1">
+                    <mxGeometry x="970" y="80" width="1200" height="1150" as="geometry"/>
+                </mxCell>
+                <mxCell id="pkg_fe_svc" value="&lt;b&gt;Servicii Angular&lt;/b&gt;" style="html=1;shape=folder;tabWidth=140;tabHeight=20;tabPosition=left;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;fontSize=13;fontStyle=1;verticalAlign=top;spacingTop=5;align=left;spacingLeft=10;" parent="1" vertex="1">
+                    <mxGeometry x="995" y="130" width="560" height="760" as="geometry"/>
+                </mxCell>
+                <mxCell id="cls_authsvc" value="&lt;b&gt;AuthService&lt;/b&gt;&lt;hr/&gt;isLoggedIn$, username$ : BehaviorSubject&lt;br/&gt;register(), login(), logout()&lt;br/&gt;getToken() : string | null&lt;br/&gt;&lt;i&gt;localStorage: token + username&lt;/i&gt;" style="html=1;rounded=1;arcSize=8;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;align=left;spacingLeft=8;verticalAlign=top;spacingTop=5;" parent="1" vertex="1">
+                    <mxGeometry x="1015" y="185" width="280" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="cls_interceptor" value="&lt;b&gt;AuthInterceptor&lt;/b&gt;&lt;hr/&gt;intercept(req, next)&lt;br/&gt;&amp;rarr; adaug&amp;#259; header &lt;i&gt;Authorization: Bearer &amp;lt;token&amp;gt;&lt;/i&gt;&lt;br/&gt;la toate cererile HTTP" style="html=1;rounded=1;arcSize=8;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;align=left;spacingLeft=8;verticalAlign=top;spacingTop=5;" parent="1" vertex="1">
+                    <mxGeometry x="1015" y="315" width="280" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="cls_stocksvc" value="&lt;b&gt;StockService&lt;/b&gt;&lt;hr/&gt;searchStocks, getChart, getFundamentals&lt;br/&gt;getArmandAnalysis, screenStocks&lt;br/&gt;getNews, getDividends, compareStocks&lt;br/&gt;summarizeEarnings, saveAnalysis&lt;br/&gt;&lt;i&gt;Toate apelurile HTTP REST&lt;/i&gt;" style="html=1;rounded=1;arcSize=8;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;align=left;spacingLeft=8;verticalAlign=top;spacingTop=5;" parent="1" vertex="1">
+                    <mxGeometry x="1015" y="425" width="280" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="cls_watchlistsvc" value="&lt;b&gt;WatchlistService&lt;/b&gt;&lt;hr/&gt;getWatchlist() : Observable&lt;br/&gt;addToWatchlist(ticker, portfolio?)&lt;br/&gt;removeFromWatchlist(id)&lt;br/&gt;updatePortfolio(id, data)" style="html=1;rounded=1;arcSize=8;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;align=left;spacingLeft=8;verticalAlign=top;spacingTop=5;" parent="1" vertex="1">
+                    <mxGeometry x="1015" y="575" width="280" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="cls_pricews" value="&lt;b&gt;PriceWsService&lt;/b&gt;&lt;hr/&gt;ws : WebSocket, subscribedTickers : Set&lt;br/&gt;subscribe(tickers[]) : Observable&lt;br/&gt;unsubscribe(tickers[])&lt;br/&gt;connect(), reconnect() &amp;mdash; auto 3s" style="html=1;rounded=1;arcSize=8;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;align=left;spacingLeft=8;verticalAlign=top;spacingTop=5;" parent="1" vertex="1">
+                    <mxGeometry x="1015" y="705" width="280" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="pkg_fe_pages" value="&lt;b&gt;Componente Pagini&lt;/b&gt;" style="html=1;shape=folder;tabWidth=160;tabHeight=20;tabPosition=left;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=2;fontSize=13;fontStyle=1;verticalAlign=top;spacingTop=5;align=left;spacingLeft=10;" parent="1" vertex="1">
+                    <mxGeometry x="1585" y="130" width="560" height="1000" as="geometry"/>
+                </mxCell>
+                <mxCell id="cls_home" value="&lt;b&gt;HomeComponent&lt;/b&gt;&lt;hr/&gt;C&amp;#259;utare + Watchlist&lt;br/&gt;Portofoliu + P&amp;amp;L&lt;br/&gt;Analize salvate" style="html=1;rounded=1;arcSize=8;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;align=left;spacingLeft=8;verticalAlign=top;spacingTop=5;" parent="1" vertex="1">
+                    <mxGeometry x="1605" y="185" width="260" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="cls_login_page" value="&lt;b&gt;LoginComponent&lt;/b&gt;&lt;hr/&gt;Formular login / &amp;#238;nregistrare&lt;br/&gt;Apeleaz&amp;#259; AuthService" style="html=1;rounded=1;arcSize=8;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;align=left;spacingLeft=8;verticalAlign=top;spacingTop=5;" parent="1" vertex="1">
+                    <mxGeometry x="1605" y="295" width="260" height="75" as="geometry"/>
+                </mxCell>
+                <mxCell id="cls_dashboard" value="&lt;b&gt;DashboardComponent&lt;/b&gt;&lt;hr/&gt;Grafic OHLCV (lightweight-charts)&lt;br/&gt;Date fundamentale + &amp;#351;tiri sentiment&lt;br/&gt;Dividende + Analiz&amp;#259; IA Armand&lt;br/&gt;Export PDF (jsPDF)" style="html=1;rounded=1;arcSize=8;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;align=left;spacingLeft=8;verticalAlign=top;spacingTop=5;" parent="1" vertex="1">
+                    <mxGeometry x="1605" y="390" width="260" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="cls_market_page" value="&lt;b&gt;MarketComponent&lt;/b&gt;&lt;hr/&gt;Indicatori macro (VIX, Gold...)&lt;br/&gt;Heatmap sectoare ETF&lt;br/&gt;C&amp;#226;&amp;#351;tig&amp;#259;tori / Perdan&amp;#539;i" style="html=1;rounded=1;arcSize=8;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;align=left;spacingLeft=8;verticalAlign=top;spacingTop=5;" parent="1" vertex="1">
+                    <mxGeometry x="1605" y="520" width="260" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="cls_screener_page" value="&lt;b&gt;ScreenerComponent&lt;/b&gt;&lt;hr/&gt;C&amp;#259;utare ac&amp;#539;iuni cu&lt;br/&gt;limbaj natural (Gemini IA)" style="html=1;rounded=1;arcSize=8;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;align=left;spacingLeft=8;verticalAlign=top;spacingTop=5;" parent="1" vertex="1">
+                    <mxGeometry x="1605" y="630" width="260" height="75" as="geometry"/>
+                </mxCell>
+                <mxCell id="cls_compare_page" value="&lt;b&gt;CompareComponent&lt;/b&gt;&lt;hr/&gt;Comparare 2 ac&amp;#539;iuni&lt;br/&gt;18 metrici + analiz&amp;#259; IA" style="html=1;rounded=1;arcSize=8;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;align=left;spacingLeft=8;verticalAlign=top;spacingTop=5;" parent="1" vertex="1">
+                    <mxGeometry x="1605" y="725" width="260" height="75" as="geometry"/>
+                </mxCell>
+                <mxCell id="cls_earnings_page" value="&lt;b&gt;EarningsComponent&lt;/b&gt;&lt;hr/&gt;Upload PDF/DOCX/HTML (mammoth, pdfjs)&lt;br/&gt;Rezumat c&amp;#226;&amp;#351;tiguri prin Gemini IA&lt;br/&gt;Analiz&amp;#259; sentiment" style="html=1;rounded=1;arcSize=8;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;align=left;spacingLeft=8;verticalAlign=top;spacingTop=5;" parent="1" vertex="1">
+                    <mxGeometry x="1605" y="820" width="260" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="cls_approutes" value="&lt;b&gt;AppRoutes&lt;/b&gt;&lt;hr/&gt;&#39;&#39; &amp;rarr; Home&lt;br/&gt;&#39;/dashboard/:ticker&#39; &amp;rarr; Dashboard&lt;br/&gt;&#39;/login&#39; &amp;rarr; Login&lt;br/&gt;&#39;/screener&#39; &amp;rarr; Screener&lt;br/&gt;&#39;/compare&#39; &amp;rarr; Compare&lt;br/&gt;&#39;/earnings&#39; &amp;rarr; Earnings&lt;br/&gt;&#39;/market&#39; &amp;rarr; Market" style="html=1;rounded=1;arcSize=8;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;align=left;spacingLeft=8;verticalAlign=top;spacingTop=5;" parent="1" vertex="1">
+                    <mxGeometry x="1605" y="930" width="260" height="155" as="geometry"/>
+                </mxCell>
+                <mxCell id="ext_mongo" value="&lt;b&gt;MongoDB 7&lt;/b&gt;&lt;br/&gt;&lt;i&gt;(Baz&amp;#259; de date)&lt;/i&gt;" style="html=1;shape=cylinder3;size=10;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=12;" vertex="1" parent="1">
+                    <mxGeometry x="100" y="1265" width="160" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="ext_yahoo_api" value="&lt;b&gt;Yahoo Finance API&lt;/b&gt;&lt;br/&gt;&lt;i&gt;(Extern)&lt;/i&gt;" style="html=1;rounded=1;arcSize=10;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;dashed=1;dashPattern=6 4;" vertex="1" parent="1">
+                    <mxGeometry x="360" y="1270" width="200" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="ext_gemini_api" value="&lt;b&gt;Google Gemini API&lt;/b&gt;&lt;br/&gt;&lt;i&gt;(Extern)&lt;/i&gt;" style="html=1;rounded=1;arcSize=10;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;dashed=1;dashPattern=6 4;" vertex="1" parent="1">
+                    <mxGeometry x="640" y="1270" width="200" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="dep1" value="&lt;i&gt;import&amp;#259;&lt;/i&gt;" style="html=1;endArrow=open;endSize=10;dashed=1;strokeWidth=1.5;fontSize=10;" parent="1" source="cls_main" target="cls_config" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="dep2" value="&lt;i&gt;import&amp;#259;&lt;/i&gt;" style="html=1;endArrow=open;endSize=10;dashed=1;strokeWidth=1.5;fontSize=10;entryX=0.08;entryY=1.019;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" target="cls_db" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="240" y="229" as="sourcePoint"/>
+                        <Array as="points">
+                            <mxPoint x="240" y="260"/>
+                            <mxPoint x="410" y="260"/>
+                            <mxPoint x="580" y="260"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="dep3" value="&lt;i&gt;apeleaz&amp;#259;&lt;/i&gt;" style="html=1;endArrow=open;endSize=10;dashed=1;strokeWidth=1.5;fontSize=10;" parent="1" source="cls_handlers" target="cls_yahoo" edge="1">
+                    <mxGeometry x="0.1586" relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="360" y="690"/>
+                            <mxPoint x="360" y="830"/>
+                            <mxPoint x="240" y="830"/>
+                        </Array>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="dep4" value="&lt;i&gt;apeleaz&amp;#259;&lt;/i&gt;" style="html=1;endArrow=open;endSize=10;dashed=1;strokeWidth=1.5;fontSize=10;entryX=0.291;entryY=0.025;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" target="cls_armand" edge="1">
+                    <mxGeometry x="0.1206" relative="1" as="geometry">
+                        <mxPoint x="340" y="630" as="sourcePoint"/>
+                        <Array as="points">
+                            <mxPoint x="360" y="630"/>
+                            <mxPoint x="360" y="830"/>
+                            <mxPoint x="530" y="830"/>
+                        </Array>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="dep5" value="&lt;i&gt;acceseaz&amp;#259;&lt;/i&gt;" style="html=1;endArrow=open;endSize=10;dashed=1;strokeWidth=1.5;fontSize=10;exitX=1;exitY=0.25;exitDx=0;exitDy=0;" parent="1" source="cls_watchlist_api" target="cls_db" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="920" y="588"/>
+                            <mxPoint x="920" y="190"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="dep6" value="&lt;i&gt;acceseaz&amp;#259;&lt;/i&gt;" style="html=1;endArrow=open;endSize=10;dashed=1;strokeWidth=1.5;fontSize=10;" edge="1" parent="1" source="cls_auth" target="cls_db">
+                    <mxGeometry x="0.1692" relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="50" y="740"/>
+                            <mxPoint x="50" y="120"/>
+                            <mxPoint x="680" y="120"/>
+                        </Array>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="http_dep" value="&lt;b&gt;HTTP / REST&lt;/b&gt;" style="html=1;endArrow=block;endFill=1;strokeWidth=2.5;strokeColor=#d6b656;fontSize=12;entryX=0.654;entryY=0.007;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="pkg_fe_svc" target="cls_handlers" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="250" y="510"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="ws_dep" value="&lt;b&gt;WebSocket&lt;/b&gt;" style="html=1;endArrow=block;endFill=1;strokeWidth=2.5;strokeColor=#d6b656;fontSize=12;entryX=0.999;entryY=0.591;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" target="cls_ws" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1010" y="740" as="sourcePoint"/>
+                        <mxPoint x="900" y="740" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="wl_dep" value="&lt;b&gt;HTTP&lt;/b&gt;" style="html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#d6b656;fontSize=11;entryX=1.001;entryY=0.66;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="cls_watchlistsvc" target="cls_watchlist_api">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="ext_c1" style="html=1;endArrow=open;endSize=10;dashed=1;strokeWidth=1.5;exitX=0.75;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="cls_db" target="ext_mongo" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="659.9998214285715" y="230.0000000000001" as="sourcePoint"/>
+                        <mxPoint x="193.32571428571444" y="1265" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="750" y="50"/>
+                            <mxPoint x="20" y="50"/>
+                            <mxPoint x="20" y="1305"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="ext_c2" style="html=1;endArrow=open;endSize=10;dashed=1;strokeWidth=1.5;" parent="1" source="cls_yahoo" target="ext_yahoo_api" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="240" y="1140"/>
+                            <mxPoint x="460" y="1140"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="ext_c3" style="html=1;endArrow=open;endSize=10;dashed=1;strokeWidth=1.5;exitX=0.906;exitY=1.045;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="cls_armand" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="730" y="1260" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="730" y="1150"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

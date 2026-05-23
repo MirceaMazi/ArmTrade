@@ -1,0 +1,261 @@
+<mxfile host="65bd71144e">
+    <diagram name="Diagrama Cazurilor de Utilizare" id="usecase-diagram">
+        <mxGraphModel dx="429" dy="341" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="2000" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title" value="&lt;b&gt;Diagrama Cazurilor de Utilizare &amp;mdash; ArmTrade&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;strokeColor=none;fillColor=none;fontSize=22;fontStyle=1;" parent="1" vertex="1">
+                    <mxGeometry x="200" y="20" width="1200" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="col_guest" value="" style="rounded=1;arcSize=5;fillColor=#f0f7ff;strokeColor=#6c8ebf;strokeWidth=2;" vertex="1" parent="1">
+                    <mxGeometry x="30" y="80" width="400" height="1060" as="geometry"/>
+                </mxCell>
+                <mxCell id="actor_guest" value="" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#6c8ebf;strokeColor=#6c8ebf;" parent="1" vertex="1">
+                    <mxGeometry x="210" y="100" width="40" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="actor_guest_lbl" value="&lt;b&gt;VIZITATOR&lt;/b&gt;&lt;br&gt;&lt;i&gt;(Neautentificat)&lt;/i&gt;" style="text;html=1;align=center;fontSize=14;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+                    <mxGeometry x="155" y="168" width="150" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="sep1" value="" style="line;html=1;strokeColor=#6c8ebf;fillColor=none;strokeWidth=1;" vertex="1" parent="1">
+                    <mxGeometry x="50" y="212" width="360" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="g_uc1" value="Căutare acțiuni după simbol / nume" style="rounded=1;arcSize=50;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="55" y="230" width="350" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="g_uc2" value="Vizualizare grafic prețuri (OHLCV)" style="rounded=1;arcSize=50;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="55" y="278" width="350" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="g_uc3" value="Vizualizare date fundamentale" style="rounded=1;arcSize=50;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="55" y="326" width="350" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="g_uc4" value="Consultare știri cu sentiment IA" style="rounded=1;arcSize=50;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="55" y="374" width="350" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="g_uc5" value="Vizualizare istoric dividende" style="rounded=1;arcSize=50;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="55" y="422" width="350" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="g_uc6" value="Privire de ansamblu piață (Market)" style="rounded=1;arcSize=50;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="55" y="470" width="350" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="g_uc7" value="Hartă sectoare (Heatmap ETF)" style="rounded=1;arcSize=50;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="55" y="518" width="350" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="g_uc8" value="Câștigători, Perdanți, Cele mai active" style="rounded=1;arcSize=50;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="55" y="566" width="350" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="g_uc9" value="Indicatori macroeconomici (VIX, Gold...)" style="rounded=1;arcSize=50;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="55" y="614" width="350" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="g_uc10" value="Analiză IA acțiune (Armand)" style="rounded=1;arcSize=50;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="55" y="662" width="350" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="g_uc11" value="Screening acțiuni cu limbaj natural" style="rounded=1;arcSize=50;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="55" y="710" width="350" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="g_uc12" value="Comparare două acțiuni (cu IA)" style="rounded=1;arcSize=50;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="55" y="758" width="350" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="g_uc13" value="Rezumat raport câștiguri (IA)" style="rounded=1;arcSize=50;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="55" y="806" width="350" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="g_uc14" value="Prețuri în timp real (WebSocket)" style="rounded=1;arcSize=50;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="55" y="854" width="350" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="g_uc15" value="Înregistrare cont nou" style="rounded=1;arcSize=50;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="55" y="902" width="350" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="g_uc16" value="Autentificare (Login)" style="rounded=1;arcSize=50;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=12;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="55" y="950" width="350" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="col_user" value="" style="rounded=1;arcSize=5;fillColor=#f0fff4;strokeColor=#82b366;strokeWidth=2;" vertex="1" parent="1">
+                    <mxGeometry x="470" y="80" width="400" height="1060" as="geometry"/>
+                </mxCell>
+                <mxCell id="actor_user" value="" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#82b366;strokeColor=#82b366;" parent="1" vertex="1">
+                    <mxGeometry x="650" y="100" width="40" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="actor_user_lbl" value="&lt;b&gt;UTILIZATOR&lt;/b&gt;&lt;br&gt;&lt;i&gt;(Autentificat)&lt;/i&gt;" style="text;html=1;align=center;fontSize=14;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+                    <mxGeometry x="595" y="168" width="150" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="user_inherit_note" value="Are acces la &lt;b&gt;toate&lt;/b&gt; funcționalitățile Vizitatorului + cele de mai jos" style="text;html=1;fontSize=11;align=center;fillColor=#e8f5e9;strokeColor=#82b366;rounded=1;arcSize=10;" vertex="1" parent="1">
+                    <mxGeometry x="488" y="208" width="364" height="34" as="geometry"/>
+                </mxCell>
+                <mxCell id="sep2" value="" style="line;html=1;strokeColor=#82b366;fillColor=none;strokeWidth=1;" vertex="1" parent="1">
+                    <mxGeometry x="490" y="252" width="360" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="u_lbl_w" value="&lt;b&gt;— Watchlist Personal —&lt;/b&gt;" style="text;html=1;fontSize=12;align=center;fillColor=none;strokeColor=none;fontColor=#2d7a2d;" vertex="1" parent="1">
+                    <mxGeometry x="490" y="265" width="360" height="22" as="geometry"/>
+                </mxCell>
+                <mxCell id="u_uc1" value="Adăugare acțiune la watchlist" style="rounded=1;arcSize=50;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="495" y="293" width="350" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="u_uc2" value="Ștergere acțiune din watchlist" style="rounded=1;arcSize=50;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="495" y="341" width="350" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="u_uc3" value="Vizualizare watchlist cu prețuri live" style="rounded=1;arcSize=50;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="495" y="389" width="350" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="u_lbl_p" value="&lt;b&gt;— Portofoliu —&lt;/b&gt;" style="text;html=1;fontSize=12;align=center;fillColor=none;strokeColor=none;fontColor=#2d7a2d;" vertex="1" parent="1">
+                    <mxGeometry x="490" y="437" width="360" height="22" as="geometry"/>
+                </mxCell>
+                <mxCell id="u_uc4" value="Înregistrare preț cumpărare + cantitate" style="rounded=1;arcSize=50;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="495" y="463" width="350" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="u_uc5" value="Vizualizare P&amp;L și valoare totală portofoliu" style="rounded=1;arcSize=50;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="495" y="511" width="350" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="u_lbl_a" value="&lt;b&gt;— Analize Salvate —&lt;/b&gt;" style="text;html=1;fontSize=12;align=center;fillColor=none;strokeColor=none;fontColor=#2d7a2d;" vertex="1" parent="1">
+                    <mxGeometry x="490" y="559" width="360" height="22" as="geometry"/>
+                </mxCell>
+                <mxCell id="u_uc6" value="Salvare analiză IA în cont" style="rounded=1;arcSize=50;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="495" y="585" width="350" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="u_uc7" value="Vizualizare analize salvate anterior" style="rounded=1;arcSize=50;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="495" y="633" width="350" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="u_uc8" value="Export analiză în PDF" style="rounded=1;arcSize=50;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="495" y="681" width="350" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="u_lbl_acc" value="&lt;b&gt;— Cont —&lt;/b&gt;" style="text;html=1;fontSize=12;align=center;fillColor=none;strokeColor=none;fontColor=#2d7a2d;" vertex="1" parent="1">
+                    <mxGeometry x="490" y="729" width="360" height="22" as="geometry"/>
+                </mxCell>
+                <mxCell id="u_uc9" value="Deconectare (Logout)" style="rounded=1;arcSize=50;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=12;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="495" y="755" width="350" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="col_yahoo" value="" style="rounded=1;arcSize=5;fillColor=#fff5f5;strokeColor=#b85450;strokeWidth=2;" vertex="1" parent="1">
+                    <mxGeometry x="910" y="80" width="320" height="1060" as="geometry"/>
+                </mxCell>
+                <mxCell id="actor_yahoo" value="" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#b85450;strokeColor=#b85450;" parent="1" vertex="1">
+                    <mxGeometry x="1050" y="100" width="40" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="actor_yahoo_lbl" value="&lt;b&gt;YAHOO FINANCE&lt;/b&gt;&lt;br&gt;&lt;i&gt;(Furnizor date externe)&lt;/i&gt;" style="text;html=1;align=center;fontSize=13;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+                    <mxGeometry x="960" y="168" width="220" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="sep3" value="" style="line;html=1;strokeColor=#b85450;fillColor=none;strokeWidth=1;" vertex="1" parent="1">
+                    <mxGeometry x="930" y="212" width="280" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="y_note" value="Furnizează date financiare către backend" style="text;html=1;fontSize=11;align=center;fillColor=#f8cecc;strokeColor=#b85450;rounded=1;" vertex="1" parent="1">
+                    <mxGeometry x="930" y="228" width="280" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="y_uc1" value="Rezultate căutare simbol / companie" style="rounded=1;arcSize=50;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="930" y="270" width="280" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="y_uc2" value="Date OHLCV grafice (candlestick)" style="rounded=1;arcSize=50;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="930" y="318" width="280" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="y_uc3" value="Date fundamentale (P/E, margins etc.)" style="rounded=1;arcSize=50;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="930" y="366" width="280" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="y_uc4" value="Știri recente ale companiei" style="rounded=1;arcSize=50;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="930" y="414" width="280" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="y_uc5" value="Istoric dividende (10 ani)" style="rounded=1;arcSize=50;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="930" y="462" width="280" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="y_uc6" value="Prețuri curente (pentru WebSocket)" style="rounded=1;arcSize=50;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="930" y="510" width="280" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="y_uc7" value="Date sectoare ETF (XLK, XLF, XLE...)" style="rounded=1;arcSize=50;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="930" y="558" width="280" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="y_uc8" value="Indicatori macro (S&amp;P 500, VIX, Gold...)" style="rounded=1;arcSize=50;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="930" y="606" width="280" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="y_uc9" value="Screener: câștigători, perdanți, activi" style="rounded=1;arcSize=50;fillColor=#f8cecc;strokeColor=#b85450;fontSize=12;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="930" y="654" width="280" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="col_gemini" value="" style="rounded=1;arcSize=5;fillColor=#fdf5ff;strokeColor=#9673a6;strokeWidth=2;" vertex="1" parent="1">
+                    <mxGeometry x="1270" y="80" width="300" height="1060" as="geometry"/>
+                </mxCell>
+                <mxCell id="actor_gemini" value="" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#9673a6;strokeColor=#9673a6;" parent="1" vertex="1">
+                    <mxGeometry x="1400" y="100" width="40" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="actor_gemini_lbl" value="&lt;b&gt;GOOGLE GEMINI&lt;/b&gt;&lt;br&gt;&lt;i&gt;(Motor analiză IA)&lt;/i&gt;" style="text;html=1;align=center;fontSize=13;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+                    <mxGeometry x="1305" y="168" width="200" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="sep4" value="" style="line;html=1;strokeColor=#9673a6;fillColor=none;strokeWidth=1;" vertex="1" parent="1">
+                    <mxGeometry x="1285" y="212" width="270" height="10" as="geometry"/>
+                </mxCell>
+                <mxCell id="ai_note" value="Procesează cereri IA (Gemini 2.5 Flash)" style="text;html=1;fontSize=11;align=center;fillColor=#e1d5e7;strokeColor=#9673a6;rounded=1;" vertex="1" parent="1">
+                    <mxGeometry x="1285" y="228" width="270" height="28" as="geometry"/>
+                </mxCell>
+                <mxCell id="ai_uc1" value="Analiză acțiune cu recomandare BUY/HOLD/SELL" style="rounded=1;arcSize=50;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="1285" y="270" width="270" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="ai_uc2" value="Generare adnotări pe grafic" style="rounded=1;arcSize=50;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="1285" y="318" width="270" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="ai_uc3" value="Screening cu limbaj natural" style="rounded=1;arcSize=50;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="1285" y="366" width="270" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="ai_uc4" value="Comparare între două acțiuni (cu verdict)" style="rounded=1;arcSize=50;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="1285" y="414" width="270" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="ai_uc5" value="Rezumat raport câștiguri (earnings)" style="rounded=1;arcSize=50;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="1285" y="462" width="270" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="ai_uc6" value="Analiză sentiment știri (Bullish/Bearish)" style="rounded=1;arcSize=50;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="1285" y="510" width="270" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="ai_uc7" value="Răspuns scenariu What-If" style="rounded=1;arcSize=50;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=12;align=left;spacingLeft=12;" vertex="1" parent="1">
+                    <mxGeometry x="1285" y="558" width="270" height="38" as="geometry"/>
+                </mxCell>
+                <mxCell id="arr_guest_yahoo" value="date piată" style="endArrow=block;endFill=1;strokeWidth=2;strokeColor=#b85450;fontSize=11;fontColor=#b85450;exitX=1;exitY=0.42;exitDx=0;exitDy=0;entryX=0;entryY=0.42;entryDx=0;entryDy=0;" edge="1" parent="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="440" y="940" as="sourcePoint"/>
+                        <mxPoint x="920" y="940" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="arr_guest_gemini" value="analiză IA" style="endArrow=block;endFill=1;strokeWidth=2;strokeColor=#9673a6;fontSize=11;fontColor=#9673a6;exitX=1;exitY=0.68;exitDx=0;exitDy=0;entryX=0.007;entryY=0.841;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" target="col_gemini">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points"/>
+                        <mxPoint x="431.5" y="973.0700000000002" as="sourcePoint"/>
+                        <mxPoint x="1270.0000000000005" y="964.9299999999997" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="arr_user_yahoo" value="date piată" style="endArrow=block;endFill=1;strokeWidth=2;strokeColor=#b85450;fontSize=11;fontColor=#b85450;exitX=1;exitY=0.38;exitDx=0;exitDy=0;entryX=0.005;entryY=0.38;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="col_user" target="col_yahoo">
+                    <mxGeometry x="-0.0385" y="-17" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="arr_user_gemini" value="analiză IA" style="endArrow=block;endFill=1;strokeWidth=2;strokeColor=#9673a6;fontSize=11;fontColor=#9673a6;exitX=1;exitY=0.62;exitDx=0;exitDy=0;entryX=0.008;entryY=0.616;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="col_user" target="col_gemini">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="legend_box" value="" style="rounded=1;arcSize=8;fillColor=#f5f5f5;strokeColor=#666666;" vertex="1" parent="1">
+                    <mxGeometry x="30" y="1170" width="1540" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg_title" value="&lt;b&gt;Legendă&lt;/b&gt;" style="text;html=1;fontSize=14;align=center;fillColor=none;strokeColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="700" y="1178" width="200" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg_a_box" value="" style="rounded=1;arcSize=50;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+                    <mxGeometry x="55" y="1210" width="25" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg_a_t" value="Funcționalități accesibile Vizitatorului (fără cont)" style="text;html=1;fontSize=12;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+                    <mxGeometry x="90" y="1208" width="330" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg_b_box" value="" style="rounded=1;arcSize=50;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+                    <mxGeometry x="55" y="1245" width="25" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg_b_t" value="Funcționalități exclusive Utilizatorului Autentificat" style="text;html=1;fontSize=12;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+                    <mxGeometry x="90" y="1243" width="330" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg_c_box" value="" style="rounded=1;arcSize=50;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+                    <mxGeometry x="480" y="1210" width="25" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg_c_t" value="Date furnizate de Yahoo Finance (prin backend)" style="text;html=1;fontSize=12;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+                    <mxGeometry x="515" y="1208" width="330" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg_d_box" value="" style="rounded=1;arcSize=50;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+                    <mxGeometry x="480" y="1245" width="25" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg_d_t" value="Funcționalități procesate de Google Gemini IA" style="text;html=1;fontSize=12;fillColor=none;strokeColor=none;" vertex="1" parent="1">
+                    <mxGeometry x="515" y="1243" width="330" height="25" as="geometry"/>
+                </mxCell>
+                <mxCell id="leg_note" value="&lt;b&gt;Notă:&lt;/b&gt; Utilizatorii nu comunică direct cu Yahoo Finance sau Gemini. Toate cererile trec prin backend-ul Go, care apelează API-urile externe și returnează rezultatele." style="text;html=1;fontSize=11;fillColor=none;strokeColor=none;fontColor=#555555;" parent="1" vertex="1">
+                    <mxGeometry x="900" y="1208" width="650" height="50" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
