@@ -1,0 +1,174 @@
+.calendar-page {
+  position: relative;
+  min-height: 100vh;
+  padding: 2rem 1.5rem 4rem;
+  overflow: hidden;
+}
+
+.bg-gradient {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(99, 102, 241, 0.15) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 90% 80%, rgba(56, 189, 248, 0.07) 0%, transparent 50%);
+  z-index: 0;
+}
+
+.bg-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99, 102, 241, 0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  z-index: 0;
+}
+
+.calendar-content {
+  position: relative;
+  z-index: 1;
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.back-btn {
+  background: rgba(99, 102, 241, 0.12);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  color: #a5b4fc;
+  padding: 0.45rem 0.9rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+}
+
+.back-btn:hover {
+  background: rgba(99, 102, 241, 0.25);
+  color: #e0e7ff;
+}
+
+.page-header {
+  margin: 1.5rem 0;
+}
+
+.page-title {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #818cf8 0%, #38bdf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.page-desc {
+  margin: 0.4rem 0 0;
+  color: #94a3b8;
+  font-size: 0.95rem;
+}
+
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.7rem 1rem;
+  background: rgba(19, 25, 41, 0.85);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+}
+
+.filter-bar i {
+  color: #6366f1;
+}
+
+.filter-bar input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #f1f5f9;
+  font-size: 0.95rem;
+}
+
+.filter-bar input::placeholder {
+  color: #64748b;
+}
+
+.loading-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.error-box {
+  padding: 1rem;
+  background: rgba(248, 113, 113, 0.1);
+  border: 1px solid rgba(248, 113, 113, 0.3);
+  border-radius: 12px;
+  color: #fca5a5;
+}
+
+.empty-state {
+  padding: 2rem;
+  text-align: center;
+  color: #64748b;
+}
+
+.week-group {
+  margin-bottom: 1.75rem;
+}
+
+.week-label {
+  margin: 0 0 0.75rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #a5b4fc;
+}
+
+.table-scroll {
+  background: rgba(19, 25, 41, 0.8);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(99, 102, 241, 0.12);
+  border-radius: 14px;
+  overflow-x: auto;
+}
+
+.ipo-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.ipo-table th {
+  background: #131929;
+  color: #94a3b8;
+  font-weight: 600;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(99, 102, 241, 0.15);
+  white-space: nowrap;
+}
+
+.ipo-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(99, 102, 241, 0.06);
+  color: #e2e8f0;
+}
+
+.ipo-table tbody tr.clickable {
+  cursor: pointer;
+}
+
+.ipo-table tbody tr.clickable:hover {
+  background: rgba(99, 102, 241, 0.07);
+}
+
+.company-cell {
+  font-weight: 600;
+}
+
+.ticker-cell {
+  font-weight: 700;
+  color: #a5b4fc;
+}

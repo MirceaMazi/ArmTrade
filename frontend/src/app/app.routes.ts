@@ -15,5 +15,20 @@ export const routes: Routes = [
   { path: 'compare', component: CompareComponent },
   { path: 'earnings', component: EarningsComponent },
   { path: 'market', component: MarketComponent },
+  {
+    path: 'sectors/:sectorSlug',
+    loadComponent: () =>
+      import('./pages/sectors/sector-detail.component').then(m => m.SectorDetailComponent)
+  },
+  {
+    path: 'ipos',
+    loadComponent: () =>
+      import('./pages/ipo-calendar/ipo-calendar.component').then(m => m.IpoCalendarComponent)
+  },
+  {
+    path: 'earnings-calendar',
+    loadComponent: () =>
+      import('./pages/earnings-calendar/earnings-calendar.component').then(m => m.EarningsCalendarComponent)
+  },
   { path: '**', redirectTo: '' }
 ];

@@ -9,6 +9,7 @@ import { DialogModule } from 'primeng/dialog';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { Subscription } from 'rxjs';
 import { StockService, SearchResult } from '../../services/stock.service';
+import { MarketService, SectorPreview } from '../../services/market.service';
 import { AuthService } from '../../services/auth.service';
 import { WatchlistService, WatchlistItem } from '../../services/watchlist.service';
 import { PriceWsService } from '../../services/price-ws.service';
@@ -31,6 +32,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   loadingWatchlist = false;
   savedAnalyses: any[] = [];
   loadingSavedAnalyses = false;
+  sectors: SectorPreview[] = [];
+  loadingSectors = false;
   private priceSub: Subscription | null = null;
 
   // Portfolio dialog
@@ -51,6 +54,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   constructor(
     private stockService: StockService,
+    private marketService: MarketService,
     private authService: AuthService,
     private watchlistService: WatchlistService,
     private priceWs: PriceWsService,
@@ -58,6 +62,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.loadSectors();
     this.authService.isLoggedIn$.subscribe(val => {
       this.isLoggedIn = val;
       if (val) {
@@ -147,9 +152,23 @@ export class HomeComponent implements OnInit, OnDestroy {
   openCompare() { this.router.navigate(['/compare']); }
   openEarnings() { this.router.navigate(['/earnings']); }
   openMarket() { this.router.navigate(['/market']); }
+  openIpos() { this.router.navigate(['/ipos']); }
+  openEarningsCalendar() { this.router.navigate(['/earnings-calendar']); }
+  openSector(slug: string) { this.router.navigate(['/sectors', slug]); }
   openLogin() { this.router.navigate(['/login']); }
   logout() { this.authService.logout(); }
   openDashboard(ticker: string) { this.router.navigate(['/dashboard', ticker]); }
+
+  loadSectors() {
+    this.loadingSectors = true;
+    this.marketService.getSectorsPreview().subscribe({
+      next: (res) => {
+        this.sectors = res;
+        this.loadingSectors = false;
+      },
+      error: () => this.loadingSectors = false
+    });
+  }
 
   loadSavedAnalyses() {
     this.loadingSavedAnalyses = true;

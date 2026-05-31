@@ -49,12 +49,17 @@ func SetupRoutes(r *gin.Engine) {
 			armand.POST("/screener", handleScreener)
 			armand.POST("/compare", handleCompareStocks)
 			armand.POST("/earnings", handleSummarizeEarnings)
+			armand.POST("/sector-summary", handleSectorSummary)
 		}
 
 		// Market discovery (public)
 		api.GET("/market/sectors", handleGetSectors)
 		api.GET("/market/macro", handleGetMacro)
 		api.GET("/market/movers", handleGetMovers)
+		api.GET("/market/sectors-preview", handleGetSectorsPreview)
+		api.GET("/market/sector-details/:sector", handleGetSectorDetails)
+		api.GET("/market/ipos", handleGetIPOs)
+		api.GET("/market/earnings", handleGetEarnings)
 
 		// Protected routes (require JWT)
 		protected := api.Group("/")
@@ -202,6 +207,26 @@ func handleSummarizeEarnings(c *gin.Context) {
 	}
 
 	result, err := armandService.SummarizeEarnings(req.Transcript, req.Ticker)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, result)
+}
+
+func handleSectorSummary(c *gin.Context) {
+	var req services.SectorSummaryRequest
+	if err := c.BindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
+		return
+	}
+	if req.Sector == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "sector is required"})
+		return
+	}
+
+	result, err := armandService.GenerateSectorSummary(&req)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

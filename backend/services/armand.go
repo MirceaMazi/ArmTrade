@@ -355,6 +355,58 @@ IMPORTANT: Return strictly as JSON matching this schema:
 	return callGeminiForType[EarningsSummaryResponse](apiKey, prompt)
 }
 
+// SectorSummaryRequest carries the context used to generate a sector overview.
+type SectorSummaryRequest struct {
+	Sector    string   `json:"sector"`
+	Movers    []string `json:"movers"`
+	Headlines []string `json:"headlines"`
+}
+
+// SectorSummaryResponse is the AI-generated prose overview for a sector.
+type SectorSummaryResponse struct {
+	Summary   string `json:"summary"`
+	Sentiment string `json:"sentiment"`
+}
+
+// GenerateSectorSummary produces a short prose paragraph describing current
+// conditions in a sector, derived from recent price movers and news headlines.
+func (s *ArmandService) GenerateSectorSummary(req *SectorSummaryRequest) (*SectorSummaryResponse, error) {
+	apiKey := os.Getenv("GEMINI_API_KEY")
+	if apiKey == "" {
+		return &SectorSummaryResponse{
+			Summary:   fmt.Sprintf("AI summary unavailable: GEMINI_API_KEY is not set. The %s sector view shows live prices and the latest headlines below.", req.Sector),
+			Sentiment: "Neutral",
+		}, nil
+	}
+
+	schema := `{
+  "type": "object",
+  "properties": {
+    "summary": {"type": "string", "description": "2-4 sentence prose overview"},
+    "sentiment": {"type": "string", "enum": ["Bullish", "Bearish", "Neutral"]}
+  },
+  "required": ["summary", "sentiment"]
+}`
+
+	var b strings.Builder
+	b.WriteString(fmt.Sprintf("You are Armand, an elite financial AI for the ArmTrade platform.\nWrite a concise 2-4 sentence prose overview of current conditions in the %s sector.\nBase it strictly on the price movements and headlines provided. Do not invent figures.\n\n", req.Sector))
+	if len(req.Movers) > 0 {
+		b.WriteString("Recent price movements:\n")
+		for _, m := range req.Movers {
+			b.WriteString("- " + m + "\n")
+		}
+	}
+	if len(req.Headlines) > 0 {
+		b.WriteString("\nTop headlines:\n")
+		for _, h := range req.Headlines {
+			b.WriteString("- " + h + "\n")
+		}
+	}
+	b.WriteString(fmt.Sprintf("\nIMPORTANT: Return strictly as JSON matching this schema:\n%s", schema))
+
+	return callGeminiForType[SectorSummaryResponse](apiKey, b.String())
+}
+
 // callGeminiForType is a generic helper to call Gemini and parse the response into any type
 func callGeminiForType[T any](apiKey, prompt string) (*T, error) {
 	reqBody := geminiRequest{}

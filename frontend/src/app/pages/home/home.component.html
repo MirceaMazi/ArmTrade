@@ -61,6 +61,50 @@
         <span class="feature-icon">📋</span>
         <span class="feature-label">Earnings Summary</span>
       </div>
+      <div class="feature-card" (click)="openIpos()">
+        <span class="feature-icon">🗓️</span>
+        <span class="feature-label">IPO Calendar</span>
+      </div>
+      <div class="feature-card" (click)="openEarningsCalendar()">
+        <span class="feature-icon">📈</span>
+        <span class="feature-label">Earnings Calendar</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Market Sectors Section -->
+  <div class="sectors-panel animate-fade-in-up" style="animation-delay: 0.08s">
+    <h3 class="watchlist-title">🧭 Market Sectors</h3>
+
+    <div *ngIf="loadingSectors" class="watchlist-loading">
+      <p-skeleton width="100%" height="5rem" borderRadius="12px"></p-skeleton>
+      <p-skeleton width="100%" height="5rem" borderRadius="12px"></p-skeleton>
+    </div>
+
+    <div *ngIf="!loadingSectors" class="sectors-list">
+      <div class="sector-card" *ngFor="let sector of sectors">
+        <div class="sector-card-head">
+          <div class="sector-name-row">
+            <span class="sector-name">{{ sector.name }}</span>
+            <span class="sector-sentiment" [ngClass]="sector.sentiment">
+              <span *ngIf="sector.sentiment === 'up'">▲</span>
+              <span *ngIf="sector.sentiment === 'down'">▼</span>
+              <span *ngIf="sector.sentiment === 'flat'">—</span>
+              {{ sector.avgChange >= 0 ? '+' : '' }}{{ sector.avgChange | number:'1.2-2' }}%
+            </span>
+          </div>
+          <button class="explore-btn" (click)="openSector(sector.slug)">Explore →</button>
+        </div>
+        <div class="sector-companies">
+          <div class="sector-company" *ngFor="let co of sector.companies">
+            <span class="sc-ticker">{{ co.symbol }}</span>
+            <span class="sc-price">{{ co.price | number:'1.2-2' }}</span>
+            <span class="sc-change" [class.positive]="co.dayChange >= 0" [class.negative]="co.dayChange < 0">
+              {{ co.dayChange >= 0 ? '+' : '' }}{{ co.dayChange | number:'1.2-2' }}%
+            </span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 

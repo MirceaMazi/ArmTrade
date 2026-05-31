@@ -1,0 +1,255 @@
+.calendar-page {
+  position: relative;
+  min-height: 100vh;
+  padding: 2rem 1.5rem 4rem;
+  overflow: hidden;
+}
+
+.bg-gradient {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(99, 102, 241, 0.15) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 90% 80%, rgba(168, 85, 247, 0.06) 0%, transparent 50%);
+  z-index: 0;
+}
+
+.bg-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99, 102, 241, 0.03) 1px, transparent 1px);
+  background-size: 60px 60px;
+  z-index: 0;
+}
+
+.calendar-content {
+  position: relative;
+  z-index: 1;
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.back-btn {
+  background: rgba(99, 102, 241, 0.12);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  color: #a5b4fc;
+  padding: 0.45rem 0.9rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+}
+
+.back-btn:hover {
+  background: rgba(99, 102, 241, 0.25);
+  color: #e0e7ff;
+}
+
+.page-header {
+  margin: 1.5rem 0;
+}
+
+.page-title {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #818cf8 0%, #38bdf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.page-desc {
+  margin: 0.4rem 0 0;
+  color: #94a3b8;
+  font-size: 0.95rem;
+}
+
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 0.7rem 1rem;
+  background: rgba(19, 25, 41, 0.85);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+}
+
+.search-field {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex: 1;
+  min-width: 200px;
+}
+
+.search-field i {
+  color: #6366f1;
+}
+
+.search-field input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #f1f5f9;
+  font-size: 0.95rem;
+}
+
+.search-field input::placeholder {
+  color: #64748b;
+}
+
+.date-field {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.date-field label {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.date-field input {
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  border-radius: 8px;
+  padding: 0.35rem 0.5rem;
+  color: #e2e8f0;
+  font-size: 0.85rem;
+  color-scheme: dark;
+}
+
+.loading-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.error-box {
+  padding: 1rem;
+  background: rgba(248, 113, 113, 0.1);
+  border: 1px solid rgba(248, 113, 113, 0.3);
+  border-radius: 12px;
+  color: #fca5a5;
+}
+
+.empty-state {
+  padding: 2rem;
+  text-align: center;
+  color: #64748b;
+}
+
+.table-scroll {
+  background: rgba(19, 25, 41, 0.8);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(99, 102, 241, 0.12);
+  border-radius: 14px;
+  overflow-x: auto;
+}
+
+.earnings-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.earnings-table th {
+  background: #131929;
+  color: #94a3b8;
+  font-weight: 600;
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(99, 102, 241, 0.15);
+  white-space: nowrap;
+}
+
+.earnings-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(99, 102, 241, 0.06);
+  color: #e2e8f0;
+}
+
+.earnings-table tbody tr.clickable {
+  cursor: pointer;
+}
+
+.earnings-table tbody tr.clickable:hover {
+  background: rgba(99, 102, 241, 0.07);
+}
+
+.company-cell {
+  font-weight: 600;
+}
+
+.toggle-icon {
+  font-size: 0.7rem;
+  color: #6366f1;
+  margin-right: 0.5rem;
+}
+
+.variant-badge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  background: rgba(99, 102, 241, 0.14);
+  color: #a5b4fc;
+}
+
+.earnings-table tbody tr.variant-row {
+  background: rgba(15, 23, 42, 0.4);
+}
+
+.earnings-table tbody tr.variant-row:hover {
+  background: rgba(99, 102, 241, 0.07);
+}
+
+.variant-name {
+  padding-left: 2rem;
+  font-weight: 500;
+  color: #cbd5e1;
+}
+
+.ticker-cell {
+  font-weight: 700;
+  color: #a5b4fc;
+}
+
+.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.fwd-tag {
+  display: inline-block;
+  margin-left: 0.35rem;
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 0.1rem 0.3rem;
+  border-radius: 4px;
+  background: rgba(56, 189, 248, 0.14);
+  color: #7dd3fc;
+  vertical-align: middle;
+}
+
+.time-pill {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  background: rgba(148, 163, 184, 0.12);
+  color: #cbd5e1;
+}
+
+.time-pill.pre-market { background: rgba(56, 189, 248, 0.14); color: #7dd3fc; }
+.time-pill.after-hours { background: rgba(168, 85, 247, 0.14); color: #c4b5fd; }
+.time-pill.during-market { background: rgba(74, 222, 128, 0.12); color: #86efac; }
