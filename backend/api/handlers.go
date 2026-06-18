@@ -50,6 +50,7 @@ func SetupRoutes(r *gin.Engine) {
 			armand.POST("/compare", handleCompareStocks)
 			armand.POST("/earnings", handleSummarizeEarnings)
 			armand.POST("/sector-summary", handleSectorSummary)
+			armand.POST("/network", handleGetNetwork)
 		}
 
 		// Market discovery (public)

@@ -30,5 +30,10 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./pages/earnings-calendar/earnings-calendar.component').then(m => m.EarningsCalendarComponent)
   },
+  {
+    path: 'network',
+    loadComponent: () =>
+      import('./pages/network/network.component').then(m => m.NetworkComponent)
+  },
   { path: '**', redirectTo: '' }
 ];

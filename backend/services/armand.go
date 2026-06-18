@@ -407,6 +407,119 @@ func (s *ArmandService) GenerateSectorSummary(req *SectorSummaryRequest) (*Secto
 	return callGeminiForType[SectorSummaryResponse](apiKey, b.String())
 }
 
+// --- Stock Relationship Network ---
+
+type NetworkNode struct {
+	Ticker      string `json:"ticker"`
+	Name        string `json:"name"`
+	Sector      string `json:"sector"`
+	Description string `json:"description"`
+}
+
+type NetworkEdge struct {
+	From         string `json:"from"`
+	To           string `json:"to"`
+	Relationship string `json:"relationship"`
+	Label        string `json:"label"`
+}
+
+type NetworkResponse struct {
+	CenterTicker string        `json:"centerTicker"`
+	Nodes        []NetworkNode `json:"nodes"`
+	Edges        []NetworkEdge `json:"edges"`
+}
+
+func (s *ArmandService) DiscoverNetwork(ticker string) (*NetworkResponse, error) {
+	apiKey := os.Getenv("GEMINI_API_KEY")
+	if apiKey == "" {
+		return &NetworkResponse{
+			CenterTicker: ticker,
+			Nodes:        []NetworkNode{{Ticker: ticker, Name: ticker, Sector: "Unknown", Description: "GEMINI_API_KEY not set"}},
+			Edges:        []NetworkEdge{},
+		}, nil
+	}
+
+	// Optionally fetch fundamentals to give Gemini context about the company
+	fundamentals, _ := s.yahooService.GetFundamentals(ticker)
+	fundBytes, _ := json.Marshal(fundamentals)
+	fundContext := ""
+	if fundamentals != nil {
+		fundContext = fmt.Sprintf("\n\nHere are the current fundamentals for %s to help you understand the company:\n%s", ticker, string(fundBytes))
+	}
+
+	schema := `{
+  "type": "object",
+  "properties": {
+    "centerTicker": {"type": "string"},
+    "nodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "ticker": {"type": "string", "description": "Stock ticker symbol"},
+          "name": {"type": "string", "description": "Company name"},
+          "sector": {"type": "string", "description": "Industry sector"},
+          "description": {"type": "string", "description": "One sentence about what they do and how they relate"}
+        },
+        "required": ["ticker", "name", "sector", "description"]
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "from": {"type": "string", "description": "Source ticker"},
+          "to": {"type": "string", "description": "Target ticker"},
+          "relationship": {"type": "string", "enum": ["supplier", "competitor", "customer", "partner", "subsidiary", "ripple"]},
+          "label": {"type": "string", "description": "Short description of the relationship"}
+        },
+        "required": ["from", "to", "relationship", "label"]
+      }
+    }
+  },
+  "required": ["centerTicker", "nodes", "edges"]
+}`
+
+	prompt := fmt.Sprintf(`You are Armand, an elite financial AI assistant for the ArmTrade platform.
+
+Given the stock ticker "%s", identify 20-30 publicly traded companies that are interconnected with it.
+Think about the FULL supply chain, competitive ecosystem, AND adjacent domains:
+
+**Direct relationships** (15-20 companies):
+1. **Suppliers** - Who supplies key components, raw materials, or services to this company?
+2. **Competitors** - Who directly competes in the same market segments?
+3. **Customers** - Which major public companies are significant customers?
+4. **Partners** - Who has strategic partnerships, joint ventures, or deep integrations?
+5. **Subsidiaries** - Are there any publicly traded subsidiaries or parent companies?
+
+**Ripple Effect / Adjacent Domains** (5-10 companies):
+6. **Ripple** - Companies in ADJACENT industries that would be significantly affected by changes in %s's business.
+   Think about the second-order and third-order effects:
+   - If %s booms, which companies in OTHER sectors would benefit or suffer?
+   - Example: NVDA (AI chips) → WDC (storage demand from AI data centers), SMCI (AI server assembly), VRT (data center cooling)
+   - Example: TSLA (EVs) → ALB (lithium mining), ENPH (solar/energy ecosystem), CHPT (charging infrastructure)
+   - These should be companies that an investor might NOT immediately think of but would be affected by the same macro trend.
+   Use the relationship type "ripple" for these connections.
+
+Also include connections BETWEEN the related companies (not just to the center), to create a rich network graph.
+For example, if Company A supplies both the center company AND Company B, show that edge too.
+
+Rules:
+- Only include real, currently publicly traded companies with valid US ticker symbols.
+- The center ticker "%s" must be included as a node.
+- Aim for 20-30 nodes total (including the center) and 30-50 edges.
+- Make the network feel interconnected, not just a star pattern. Include cross-connections between related companies.
+- Each edge label should be concise (3-6 words) describing the specific relationship.
+- Ripple-effect nodes should connect to existing nodes in the network where logical, not just to the center.
+%s
+
+IMPORTANT: Return strictly as JSON matching this schema:
+%s`, ticker, ticker, ticker, ticker, fundContext, schema)
+
+	return callGeminiForType[NetworkResponse](apiKey, prompt)
+}
+
 // callGeminiForType is a generic helper to call Gemini and parse the response into any type
 func callGeminiForType[T any](apiKey, prompt string) (*T, error) {
 	reqBody := geminiRequest{}

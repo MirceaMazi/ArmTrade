@@ -154,6 +154,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   openMarket() { this.router.navigate(['/market']); }
   openIpos() { this.router.navigate(['/ipos']); }
   openEarningsCalendar() { this.router.navigate(['/earnings-calendar']); }
+  openNetwork() { this.router.navigate(['/network']); }
   openSector(slug: string) { this.router.navigate(['/sectors', slug]); }
   openLogin() { this.router.navigate(['/login']); }
   logout() { this.authService.logout(); }

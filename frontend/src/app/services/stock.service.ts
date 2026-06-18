@@ -46,11 +46,41 @@ export interface ScreenerResponse {
   summary: string;
 }
 
+export interface NetworkNode {
+  ticker: string;
+  name: string;
+  sector: string;
+  description: string;
+}
+
+export interface NetworkEdge {
+  from: string;
+  to: string;
+  relationship: 'supplier' | 'competitor' | 'customer' | 'partner' | 'subsidiary' | 'ripple';
+  label: string;
+}
+
+export interface NetworkResponse {
+  centerTicker: string;
+  nodes: NetworkNode[];
+  edges: NetworkEdge[];
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class StockService {
   private apiUrl = environment.apiUrl;
+
+  networkCache: {
+    ticker: string;
+    data: NetworkResponse;
+    nodes: any[];
+    edges: any[];
+    panX: number;
+    panY: number;
+    zoom: number;
+  } | null = null;
 
   constructor(private http: HttpClient) { }
 
@@ -100,5 +130,9 @@ export class StockService {
 
   getSavedAnalyses(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/analyses`);
+  }
+
+  getNetwork(ticker: string): Observable<NetworkResponse> {
+    return this.http.post<NetworkResponse>(`${this.apiUrl}/armand/network`, { ticker });
   }
 }

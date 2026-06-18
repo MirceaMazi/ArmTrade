@@ -1,0 +1,129 @@
+<div class="network-container">
+  <!-- Animated background -->
+  <div class="bg-gradient"></div>
+  <div class="bg-grid"></div>
+
+  <!-- Header -->
+  <div class="network-header animate-fade-in">
+    <button class="back-btn" (click)="goHome()">
+      <i class="pi pi-arrow-left"></i> Home
+    </button>
+    <h1 class="page-title">🕸️ Stock Network</h1>
+    <p class="page-subtitle">Discover interconnected companies across the supply chain</p>
+  </div>
+
+  <!-- Search Area -->
+  <div class="search-section animate-fade-in-up">
+    <div class="search-box">
+      <i class="pi pi-search search-icon"></i>
+      <p-autoComplete
+        [(ngModel)]="selectedStock"
+        [suggestions]="searchResults"
+        (completeMethod)="search($event)"
+        (onSelect)="onSelect($event)"
+        (keyup)="onSearchKeyup($event)"
+        field="shortname"
+        placeholder="Enter a ticker to map its network (e.g. NVDA, AAPL, TSLA)..."
+        [style]="{'width':'100%'}"
+        [inputStyle]="{'width':'100%', 'padding': '1rem 1rem 1rem 2.75rem', 'font-size': '1.05rem', 'border-radius': '12px', 'background': 'rgba(15, 23, 42, 0.9)', 'color': '#f1f5f9', 'border': '1px solid rgba(99, 102, 241, 0.3)'}"
+        [delay]="300"
+        [scrollHeight]="'300px'"
+      >
+        <ng-template let-item pTemplate="item">
+          <div class="suggestion-item">
+            <div class="suggestion-ticker">{{ item.symbol }}</div>
+            <div class="suggestion-name">{{ item.shortname || item.longname }}</div>
+            <div class="suggestion-exchange">{{ item.exchange }}</div>
+          </div>
+        </ng-template>
+      </p-autoComplete>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-section animate-fade-in">
+    <div class="loading-spinner">
+      <div class="spinner-ring"></div>
+      <div class="spinner-ring delay-1"></div>
+      <div class="spinner-ring delay-2"></div>
+    </div>
+    <p class="loading-text">Armand is mapping the network...</p>
+    <p class="loading-subtext">Analyzing supply chains, competitors & partners</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="errorMessage" class="error-section animate-fade-in">
+    <div class="error-card">
+      <i class="pi pi-exclamation-triangle"></i>
+      <p>{{ errorMessage }}</p>
+    </div>
+  </div>
+
+  <!-- Graph Canvas + Legend -->
+  <div *ngIf="networkData && !loading" class="graph-section animate-fade-in-up">
+    <div class="graph-wrapper">
+      <canvas
+        #graphCanvas
+        class="graph-canvas"
+        (mousemove)="onCanvasMouseMove($event)"
+        (mousedown)="onCanvasMouseDown($event)"
+        (mouseup)="onCanvasMouseUp($event)"
+        (click)="onCanvasClick($event)"
+        (mouseleave)="onCanvasMouseLeave()"
+        (wheel)="onCanvasWheel($event)"
+        (contextmenu)="onCanvasContextMenu($event)"
+        (auxclick)="$event.preventDefault()"
+      ></canvas>
+
+      <!-- Legend -->
+      <div class="legend-panel" *ngIf="legendItems.length > 0">
+        <h4 class="legend-title">Relationships</h4>
+        <div class="legend-item" *ngFor="let item of legendItems">
+          <span class="legend-dot" [style.background]="item.color"></span>
+          <span class="legend-icon">{{ item.icon }}</span>
+          <span class="legend-label">{{ item.label }}</span>
+        </div>
+      </div>
+
+      <div class="instructions-panel">
+        <span><i class="pi pi-info-circle"></i> Click to open dashboard · Drag to rearrange · Scroll to zoom · Middle-click to pan</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty state -->
+  <div *ngIf="!hasSearched && !loading" class="empty-state animate-fade-in-up" style="animation-delay: 0.15s">
+    <div class="empty-illustration">
+      <div class="empty-node center-empty"></div>
+      <div class="empty-node node-1"></div>
+      <div class="empty-node node-2"></div>
+      <div class="empty-node node-3"></div>
+      <svg class="empty-lines" viewBox="0 0 200 200">
+        <line x1="100" y1="100" x2="40" y2="50" stroke="rgba(99,102,241,0.2)" stroke-width="1.5"/>
+        <line x1="100" y1="100" x2="160" y2="60" stroke="rgba(249,115,22,0.2)" stroke-width="1.5"/>
+        <line x1="100" y1="100" x2="130" y2="160" stroke="rgba(34,197,94,0.2)" stroke-width="1.5"/>
+      </svg>
+    </div>
+    <h3>Map Any Stock's Ecosystem</h3>
+    <p>Search for a ticker above to discover its suppliers, competitors, customers, and partners — visualized as an interactive network graph.</p>
+  </div>
+
+  <!-- Tooltip (rendered outside canvas via Angular) -->
+  <div
+    class="graph-tooltip"
+    *ngIf="tooltipVisible"
+    [style.left.px]="tooltipX + 16"
+    [style.top.px]="tooltipY - 10"
+  >
+    <div class="tooltip-header">
+      <span class="tooltip-ticker">{{ tooltipTicker }}</span>
+      <span class="tooltip-sector" *ngIf="tooltipSector">{{ tooltipSector }}</span>
+    </div>
+    <div class="tooltip-name" *ngIf="tooltipName && !tooltipRelationship">{{ tooltipName }}</div>
+    <div class="tooltip-desc" *ngIf="tooltipDescription">{{ tooltipDescription }}</div>
+    <div class="tooltip-rel" *ngIf="tooltipRelationship">
+      <span class="tooltip-rel-type">{{ tooltipRelationship }}</span>
+      <span class="tooltip-rel-label">{{ tooltipRelLabel }}</span>
+    </div>
+  </div>
+</div>
