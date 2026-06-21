@@ -6,21 +6,22 @@
 }
 
 .bg-gradient {
-  position: absolute;
-  inset: 0;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
   background:
-    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(99, 102, 241, 0.15) 0%, transparent 60%),
-    radial-gradient(ellipse 40% 30% at 90% 80%, rgba(56, 189, 248, 0.07) 0%, transparent 50%);
+    radial-gradient(ellipse 80% 50% at 50% -20%, rgba(99, 102, 241, 0.12), transparent),
+    radial-gradient(ellipse 60% 40% at 80% 80%, rgba(168, 85, 247, 0.08), transparent),
+    #0a0e1a;
   z-index: 0;
 }
 
 .bg-grid {
-  position: absolute;
-  inset: 0;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
   background-image:
     linear-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px),
     linear-gradient(90deg, rgba(99, 102, 241, 0.03) 1px, transparent 1px);
-  background-size: 60px 60px;
+  background-size: 40px 40px;
   z-index: 0;
 }
 
@@ -31,21 +32,35 @@
   margin: 0 auto;
 }
 
+.calendar-header {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
 .back-btn {
-  background: rgba(99, 102, 241, 0.12);
-  border: 1px solid rgba(99, 102, 241, 0.25);
-  color: #a5b4fc;
-  padding: 0.45rem 0.9rem;
-  border-radius: 8px;
+  position: absolute;
+  left: 0;
+  top: 0.25rem;
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(99, 102, 241, 0.2);
+  color: #94a3b8;
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
   cursor: pointer;
-  font-weight: 600;
   font-size: 0.85rem;
-  transition: all 0.2s;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
 }
 
 .back-btn:hover {
-  background: rgba(99, 102, 241, 0.25);
-  color: #e0e7ff;
+  background: rgba(99, 102, 241, 0.15);
+  color: #c7d2fe;
+  border-color: rgba(99, 102, 241, 0.4);
 }
 
 .page-header {

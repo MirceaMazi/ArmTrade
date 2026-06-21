@@ -4,10 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { ButtonModule } from 'primeng/button';
-import { SkeletonModule } from 'primeng/skeleton';
 import { TagModule } from 'primeng/tag';
 import { forkJoin } from 'rxjs';
 import { StockService, SearchResult } from '../../services/stock.service';
+import { LoadingSpinnerComponent } from '../../components/loading-spinner/loading-spinner.component';
 
 interface FundamentalMetric {
   label: string;
@@ -21,7 +21,7 @@ interface FundamentalMetric {
 @Component({
   selector: 'app-compare',
   standalone: true,
-  imports: [CommonModule, FormsModule, AutoCompleteModule, ButtonModule, SkeletonModule, TagModule],
+  imports: [CommonModule, FormsModule, AutoCompleteModule, ButtonModule, TagModule, LoadingSpinnerComponent],
   templateUrl: './compare.component.html',
   styleUrl: './compare.component.css'
 })

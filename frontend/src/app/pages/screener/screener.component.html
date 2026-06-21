@@ -1,43 +1,36 @@
 <div class="screener-container">
-  <div class="header">
+  <!-- Animated background -->
+  <div class="bg-gradient"></div>
+  <div class="bg-grid"></div>
+
+  <!-- Header -->
+  <div class="screener-header animate-fade-in">
     <button class="back-btn" (click)="goBack()">
-      <i class="pi pi-arrow-left"></i>
+      <i class="pi pi-arrow-left"></i> Home
     </button>
-    <h1>AI Stock Screener</h1>
+    <h1 class="page-title">✦ AI Stock Screener</h1>
+    <p class="page-subtitle">Ask Armand to find stocks using natural language</p>
   </div>
 
-  <div class="glass-card animate-fade-in-up">
-    <div class="screener-title">
-      <i class="pi pi-search" style="color: #818cf8;"></i>
-      <span>Ask Armand to find stocks</span>
-    </div>
-
-    <div class="search-row">
+  <!-- Search Area -->
+  <div class="search-section animate-fade-in-up">
+    <div class="search-box">
+      <i class="pi pi-search search-icon"></i>
       <input
         [(ngModel)]="query"
         placeholder="e.g., Show me undervalued tech stocks with a P/E under 20"
         class="screener-input"
         (keydown.enter)="search()"
       />
-      <p-button
-        label="Screen"
-        icon="pi pi-sparkles"
-        (onClick)="search()"
-        [loading]="loading"
-        styleClass="rerun-btn"
-      ></p-button>
+      <button class="screen-btn" (click)="search()" [disabled]="loading">
+        <i class="pi pi-sparkles"></i> {{ loading ? 'Searching...' : 'Screen' }}
+      </button>
     </div>
   </div>
 
   <!-- Loading -->
   <div *ngIf="loading" class="results-section">
-    <div *ngFor="let i of [1,2,3,4,5]" class="result-card">
-      <div class="result-item" style="cursor: default;">
-        <p-skeleton width="60px" height="1.25rem" borderRadius="6px"></p-skeleton>
-        <p-skeleton width="180px" height="1.25rem" borderRadius="6px"></p-skeleton>
-        <p-skeleton width="100%" height="1rem" borderRadius="6px"></p-skeleton>
-      </div>
-    </div>
+    <app-loading-spinner text="Screening stocks..."></app-loading-spinner>
   </div>
 
   <!-- Results -->

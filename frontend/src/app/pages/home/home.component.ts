@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { ButtonModule } from 'primeng/button';
-import { SkeletonModule } from 'primeng/skeleton';
 import { DialogModule } from 'primeng/dialog';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { Subscription } from 'rxjs';
@@ -13,11 +12,12 @@ import { MarketService, SectorPreview } from '../../services/market.service';
 import { AuthService } from '../../services/auth.service';
 import { WatchlistService, WatchlistItem } from '../../services/watchlist.service';
 import { PriceWsService } from '../../services/price-ws.service';
+import { LoadingSpinnerComponent } from '../../components/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, FormsModule, AutoCompleteModule, ButtonModule, SkeletonModule, DialogModule, InputNumberModule],
+  imports: [CommonModule, FormsModule, AutoCompleteModule, ButtonModule, DialogModule, InputNumberModule, LoadingSpinnerComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
@@ -155,6 +155,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   openIpos() { this.router.navigate(['/ipos']); }
   openEarningsCalendar() { this.router.navigate(['/earnings-calendar']); }
   openNetwork() { this.router.navigate(['/network']); }
+  openInsider() { this.router.navigate(['/insider']); }
   openSector(slug: string) { this.router.navigate(['/sectors', slug]); }
   openLogin() { this.router.navigate(['/login']); }
   logout() { this.authService.logout(); }

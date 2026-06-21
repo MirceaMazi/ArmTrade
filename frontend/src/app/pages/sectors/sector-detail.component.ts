@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { SkeletonModule } from 'primeng/skeleton';
+import { LoadingSpinnerComponent } from '../../components/loading-spinner/loading-spinner.component';
 import {
   MarketService,
   SectorDetail,
@@ -12,7 +12,7 @@ import {
 @Component({
   selector: 'app-sector-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule, SkeletonModule],
+  imports: [CommonModule, RouterModule, LoadingSpinnerComponent],
   templateUrl: './sector-detail.component.html',
   styleUrl: './sector-detail.component.css'
 })

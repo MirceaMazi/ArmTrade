@@ -132,6 +132,7 @@ p-autocomplete-overlay,
   border-radius: 12px !important;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6) !important;
   overflow: hidden !important;
+  z-index: 99999 !important;
 }
 
 .p-autocomplete-list,

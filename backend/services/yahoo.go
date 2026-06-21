@@ -115,6 +115,22 @@ func (s *YahooFinanceService) GetFundamentals(ticker string) (map[string]interfa
 	return res, nil
 }
 
+// GetInsiderData fetches insider transactions, holders, institutional ownership
+// and net share purchase activity from Yahoo Finance. Data originates from SEC
+// Form 4 filings. Cached for 15 minutes to respect rate limits.
+func (s *YahooFinanceService) GetInsiderData(ticker string) (map[string]interface{}, error) {
+	modules := "insiderTransactions,insiderHolders,institutionOwnership,netSharePurchaseActivity"
+	url := fmt.Sprintf("https://query2.finance.yahoo.com/v10/finance/quoteSummary/%s?modules=%s&crumb=%s", ticker, modules, s.crumb)
+
+	res, err := s.cachedRequest(url, true, 15*time.Minute)
+	if err != nil || res == nil || res["quoteSummary"] == nil {
+		s.refreshCrumb()
+		url = fmt.Sprintf("https://query2.finance.yahoo.com/v10/finance/quoteSummary/%s?modules=%s&crumb=%s", ticker, modules, s.crumb)
+		return s.cachedRequest(url, true, 15*time.Minute)
+	}
+	return res, nil
+}
+
 func (s *YahooFinanceService) cachedRequest(url string, useCrumb bool, ttl time.Duration) (map[string]interface{}, error) {
 	s.mutex.Lock()
 	if entry, ok := s.cache[url]; ok && time.Now().Before(entry.expiresAt) {

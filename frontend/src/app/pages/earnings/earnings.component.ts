@@ -3,7 +3,7 @@ import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
-import { SkeletonModule } from 'primeng/skeleton';
+import { LoadingSpinnerComponent } from '../../components/loading-spinner/loading-spinner.component';
 import { TagModule } from 'primeng/tag';
 import { StockService } from '../../services/stock.service';
 import * as mammoth from 'mammoth';
@@ -15,7 +15,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs
 @Component({
   selector: 'app-earnings',
   standalone: true,
-  imports: [CommonModule, FormsModule, ButtonModule, SkeletonModule, TagModule],
+  imports: [CommonModule, FormsModule, ButtonModule, LoadingSpinnerComponent, TagModule],
   templateUrl: './earnings.component.html',
   styleUrl: './earnings.component.css'
 })

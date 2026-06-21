@@ -66,6 +66,39 @@ export interface NetworkResponse {
   edges: NetworkEdge[];
 }
 
+// --- Insider Radar ---
+
+export interface InsiderPattern {
+  title: string;
+  description: string;
+  sentiment: 'bullish' | 'bearish' | 'neutral';
+}
+
+export interface KeyTransaction {
+  insiderName: string;
+  title: string;
+  type: 'Buy' | 'Sell' | 'Option Exercise';
+  shares: number;
+  value: number;
+  date: string;
+}
+
+export interface InsiderAnalysis {
+  signalStrength: 'high' | 'moderate' | 'low' | 'neutral';
+  narrative: string;
+  patterns: InsiderPattern[];
+  keyTransactions: KeyTransaction[];
+  buyVsSellRatio: string;
+}
+
+export interface InsiderRadarResponse {
+  ticker: string;
+  analysis: InsiderAnalysis;
+  rawData: any;
+  source: string;
+  sourceUrl: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -134,5 +167,9 @@ export class StockService {
 
   getNetwork(ticker: string): Observable<NetworkResponse> {
     return this.http.post<NetworkResponse>(`${this.apiUrl}/armand/network`, { ticker });
+  }
+
+  getInsiderRadar(ticker: string): Observable<InsiderRadarResponse> {
+    return this.http.post<InsiderRadarResponse>(`${this.apiUrl}/armand/insider`, { ticker });
   }
 }

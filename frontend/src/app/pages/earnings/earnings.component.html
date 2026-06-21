@@ -1,16 +1,19 @@
-<div class="earnings-page">
-  <nav class="top-bar animate-fade-in">
-    <div class="top-bar-left">
-      <button class="back-btn" (click)="goBack()">←</button>
-      <span class="nav-logo" (click)="goBack()">ArmTrade</span>
-      <span class="nav-ticker">Earnings Summary</span>
-    </div>
-  </nav>
+<div class="earnings-container">
+  <!-- Animated background -->
+  <div class="bg-gradient"></div>
+  <div class="bg-grid"></div>
+
+  <!-- Header -->
+  <div class="earnings-header animate-fade-in">
+    <button class="back-btn" (click)="goBack()">
+      <i class="pi pi-arrow-left"></i> Home
+    </button>
+    <h1 class="page-title">📋 Earnings Summary</h1>
+    <p class="page-subtitle">Paste an earnings call transcript and Armand AI will extract key insights</p>
+  </div>
 
   <div class="earnings-content animate-fade-in-up">
     <div class="glass-card input-card">
-      <h2>📊 Earnings Call Summarizer</h2>
-      <p class="subtitle">Paste an earnings call transcript and Armand AI will extract key insights</p>
 
       <div class="form-group">
         <label>Ticker (optional)</label>
@@ -46,7 +49,7 @@
     </div>
 
     <div *ngIf="loading" class="loading-state">
-      <p-skeleton width="100%" height="15rem" borderRadius="16px"></p-skeleton>
+      <app-loading-spinner text="Summarizing earnings call..."></app-loading-spinner>
     </div>
 
     <div *ngIf="summary" class="glass-card results-card">

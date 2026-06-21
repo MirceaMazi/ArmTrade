@@ -1,0 +1,161 @@
+<div class="insider-container">
+  <!-- Animated background -->
+  <div class="bg-gradient"></div>
+  <div class="bg-grid"></div>
+
+  <!-- Header -->
+  <div class="insider-header animate-fade-in">
+    <button class="back-btn" (click)="goHome()">
+      <i class="pi pi-arrow-left"></i> Home
+    </button>
+    <h1 class="page-title">🕵️ Insider Radar</h1>
+    <p class="page-subtitle">Track what corporate insiders are doing with their own money</p>
+  </div>
+
+  <!-- Search Area -->
+  <div class="search-section animate-fade-in-up">
+    <div class="search-box">
+      <i class="pi pi-search search-icon"></i>
+      <p-autoComplete
+        [(ngModel)]="selectedStock"
+        [suggestions]="searchResults"
+        (completeMethod)="search($event)"
+        (onSelect)="onSelect($event)"
+        (keyup)="onSearchKeyup($event)"
+        field="shortname"
+        placeholder="Search a ticker to scan insider activity (e.g. AAPL, TSLA)..."
+        [style]="{'width':'100%'}"
+        [inputStyle]="{'width':'100%', 'padding': '1rem 1rem 1rem 2.75rem', 'font-size': '1.05rem', 'border-radius': '12px', 'background': 'rgba(15, 23, 42, 0.9)', 'color': '#f1f5f9', 'border': '1px solid rgba(99, 102, 241, 0.3)'}"
+        [delay]="300"
+        [scrollHeight]="'300px'"
+      >
+        <ng-template let-item pTemplate="item">
+          <div class="suggestion-item">
+            <div class="suggestion-ticker">{{ item.symbol }}</div>
+            <div class="suggestion-name">{{ item.shortname || item.longname }}</div>
+            <div class="suggestion-exchange">{{ item.exchange }}</div>
+          </div>
+        </ng-template>
+      </p-autoComplete>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <app-loading-spinner *ngIf="loading"
+    text="Armand is scanning insider filings..."
+    subtext="Analyzing SEC Form 4 data for patterns">
+  </app-loading-spinner>
+
+  <!-- Error State -->
+  <div *ngIf="errorMessage" class="error-section animate-fade-in">
+    <div class="error-card">
+      <i class="pi pi-exclamation-triangle"></i>
+      <p>{{ errorMessage }}</p>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div *ngIf="response && !loading" class="results-section animate-fade-in-up">
+
+    <!-- Signal Banner -->
+    <div class="signal-banner" [style.border-left-color]="signalColor">
+      <div class="signal-header">
+        <span class="signal-icon">{{ signalIcon }}</span>
+        <div class="signal-info">
+          <span class="signal-label" [style.color]="signalColor">{{ signalLabel }}</span>
+          <span class="signal-ticker">{{ currentTicker }}</span>
+        </div>
+        <div class="signal-ratio">
+          <span class="ratio-label">Buy vs Sell</span>
+          <span class="ratio-value">{{ analysis?.buyVsSellRatio }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Narrative -->
+    <div class="narrative-card">
+      <div class="narrative-header">
+        <span class="narrative-icon">🧠</span>
+        <h3>Armand's Analysis</h3>
+      </div>
+      <p class="narrative-text">{{ analysis?.narrative }}</p>
+    </div>
+
+    <!-- Pattern Cards -->
+    <div class="patterns-grid" *ngIf="analysis?.patterns?.length">
+      <h3 class="section-title">📊 Detected Patterns</h3>
+      <div class="patterns-row">
+        <div class="pattern-card" *ngFor="let pattern of analysis!.patterns"
+             [style.border-left-color]="sentimentColor(pattern.sentiment)">
+          <div class="pattern-header">
+            <span class="pattern-sentiment">{{ sentimentIcon(pattern.sentiment) }}</span>
+            <h4 class="pattern-title">{{ pattern.title }}</h4>
+          </div>
+          <p class="pattern-desc">{{ pattern.description }}</p>
+          <span class="pattern-badge" [style.color]="sentimentColor(pattern.sentiment)">
+            {{ pattern.sentiment | titlecase }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Key Transactions Timeline -->
+    <div class="transactions-section" *ngIf="analysis?.keyTransactions?.length">
+      <h3 class="section-title">📋 Key Transactions</h3>
+      <div class="timeline">
+        <div class="timeline-item" *ngFor="let tx of analysis!.keyTransactions; let i = index"
+             [style.animation-delay]="(i * 0.08) + 's'">
+          <div class="timeline-dot" [style.background]="transactionColor(tx.type)"></div>
+          <div class="timeline-connector" *ngIf="i < analysis!.keyTransactions.length - 1"></div>
+          <div class="timeline-card" [style.border-left-color]="transactionColor(tx.type)">
+            <div class="tx-header">
+              <span class="tx-type-icon">{{ transactionIcon(tx.type) }}</span>
+              <span class="tx-type" [style.color]="transactionColor(tx.type)">{{ tx.type }}</span>
+              <span class="tx-date">{{ tx.date }}</span>
+            </div>
+            <div class="tx-body">
+              <div class="tx-insider">
+                <span class="tx-name">{{ tx.insiderName }}</span>
+                <span class="tx-title">{{ tx.title }}</span>
+              </div>
+              <div class="tx-details">
+                <div class="tx-metric">
+                  <span class="tx-metric-label">Shares</span>
+                  <span class="tx-metric-value">{{ formatShares(tx.shares) }}</span>
+                </div>
+                <div class="tx-metric">
+                  <span class="tx-metric-label">Value</span>
+                  <span class="tx-metric-value" [style.color]="transactionColor(tx.type)">{{ formatValue(tx.value) }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Source Citation -->
+    <div class="source-footer">
+      <div class="source-badge" (click)="openSourceUrl()">
+        <i class="pi pi-external-link"></i>
+        <span>Data sourced from <strong>{{ response.source }}</strong></span>
+      </div>
+      <p class="source-note">
+        All insider transactions are derived from SEC Form 4 filings. 
+        Click above to view the full filing history on Yahoo Finance.
+      </p>
+    </div>
+  </div>
+
+  <!-- Empty state -->
+  <div *ngIf="!hasSearched && !loading" class="empty-state animate-fade-in-up" style="animation-delay: 0.15s">
+    <div class="empty-illustration">
+      <div class="empty-icon">🕵️</div>
+      <div class="radar-ring ring-1"></div>
+      <div class="radar-ring ring-2"></div>
+      <div class="radar-ring ring-3"></div>
+    </div>
+    <h3>Follow the Smart Money</h3>
+    <p>Search for any ticker above to see what corporate insiders — CEOs, CFOs, and directors — are doing with their own shares. Powered by real SEC Form 4 filings.</p>
+  </div>
+</div>

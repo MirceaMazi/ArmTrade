@@ -73,11 +73,7 @@
             <span class="card-title">Fundamentals</span>
           </div>
 
-          <div *ngIf="loadingFundamentals" class="skeleton-stack">
-            <p-skeleton width="100%" height="4rem" borderRadius="10px"></p-skeleton>
-            <p-skeleton width="100%" height="4rem" borderRadius="10px"></p-skeleton>
-            <p-skeleton width="100%" height="4rem" borderRadius="10px"></p-skeleton>
-          </div>
+          <app-loading-spinner *ngIf="loadingFundamentals" text="Loading fundamentals..."></app-loading-spinner>
 
           <div *ngIf="!loadingFundamentals && fundamentalData" class="fundamentals-content">
             <div class="fundamentals-grid">
@@ -124,9 +120,7 @@
           <div class="card-header">
             <span class="card-title">Yearly Financials</span>
           </div>
-          <div *ngIf="loadingFundamentals" class="skeleton-stack">
-             <p-skeleton width="100%" height="8rem" borderRadius="10px"></p-skeleton>
-          </div>
+          <app-loading-spinner *ngIf="loadingFundamentals" text="Loading yearly financials..."></app-loading-spinner>
           <div *ngIf="!loadingFundamentals && fundamentalData" class="financials-data-content">
             <div *ngIf="fundamentalData.earnings?.financialsChart?.yearly?.length > 0; else noEarnings">
               <div class="yearly-bar" *ngFor="let year of fundamentalData.earnings.financialsChart.yearly">
@@ -160,10 +154,7 @@
                 <p>Dividend Rate: <strong>{{ fundamentalData.summaryDetail?.dividendRate?.fmt }}</strong></p>
               </div>
               
-              <div *ngIf="loadingDividends" class="skeleton-stack" style="margin-top: 1rem">
-                <p-skeleton width="100%" height="2rem" borderRadius="6px"></p-skeleton>
-                <p-skeleton width="100%" height="2rem" borderRadius="6px"></p-skeleton>
-              </div>
+              <app-loading-spinner *ngIf="loadingDividends" text="Loading dividend history..."></app-loading-spinner>
 
               <div *ngIf="!loadingDividends && dividends.length > 0" class="dividend-history">
                 <div class="div-history-header">
@@ -192,9 +183,7 @@
           <div class="card-header">
             <span class="card-title">Latest News & AI Sentiment</span>
           </div>
-          <div *ngIf="loadingNews" class="skeleton-stack">
-             <p-skeleton width="100%" height="3rem" borderRadius="10px" *ngFor="let i of [1,2,3]"></p-skeleton>
-          </div>
+          <app-loading-spinner *ngIf="loadingNews" text="Fetching latest news & sentiment..."></app-loading-spinner>
           <div *ngIf="!loadingNews && news.length > 0" class="news-list">
             <div class="news-item" *ngFor="let n of news">
               <a [href]="n.link" target="_blank" class="news-title">{{ n.title }}</a>
@@ -278,13 +267,10 @@
         </div>
 
         <!-- Loading Indicator -->
-        <div *ngIf="loadingAnalysis" class="ai-loading">
-          <p-progressBar mode="indeterminate" [style]="{'height': '3px', 'border-radius': '4px'}"></p-progressBar>
-          <div class="ai-loading-text">
-            <span class="loading-sparkle">✦</span>
-            Armand is analyzing {{ ticker | uppercase }}...
-          </div>
-        </div>
+        <app-loading-spinner *ngIf="loadingAnalysis"
+          text="Armand is analyzing {{ ticker | uppercase }}..."
+          subtext="Evaluating technicals, fundamentals, and sentiment">
+        </app-loading-spinner>
 
         <!-- Analysis Results -->
         <div *ngIf="!loadingAnalysis && armandAnalysis" class="ai-results">

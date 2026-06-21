@@ -35,5 +35,10 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./pages/network/network.component').then(m => m.NetworkComponent)
   },
+  {
+    path: 'insider',
+    loadComponent: () =>
+      import('./pages/insider/insider.component').then(m => m.InsiderComponent)
+  },
   { path: '**', redirectTo: '' }
 ];

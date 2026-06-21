@@ -3,14 +3,19 @@
   <div class="bg-grid"></div>
 
   <div class="sector-content">
-    <button class="back-btn" (click)="goHome()">← Back</button>
+    <!-- Header -->
+    <div class="sector-header animate-fade-in" style="text-align: center; margin-bottom: 2rem;">
+      <button class="back-btn" (click)="goHome()">
+        <i class="pi pi-arrow-left"></i> Home
+      </button>
+      <h1 class="page-title" *ngIf="detail" style="margin-top: 0.5rem;">{{ detail.name }}</h1>
+    </div>
 
     <div *ngIf="error" class="error-box">{{ error }}</div>
 
-    <!-- Header + AI summary -->
+    <!-- AI summary -->
     <div class="summary-card" *ngIf="detail">
       <div class="summary-head">
-        <h1 class="sector-title">{{ detail.name }}</h1>
         <span class="sentiment-pill" [ngClass]="detail.sentiment">
           <span *ngIf="detail.sentiment === 'up'">▲</span>
           <span *ngIf="detail.sentiment === 'down'">▼</span>
@@ -19,14 +24,13 @@
         </span>
       </div>
 
-      <p-skeleton *ngIf="loadingSummary" width="100%" height="4rem" borderRadius="8px"></p-skeleton>
+      <app-loading-spinner *ngIf="loadingSummary" text="Generating AI summary..."></app-loading-spinner>
 
       <p class="summary-text" *ngIf="!loadingSummary && summary">{{ summary.summary }}</p>
     </div>
 
     <div *ngIf="loadingDetail" class="loading-grid">
-      <p-skeleton width="100%" height="20rem" borderRadius="14px"></p-skeleton>
-      <p-skeleton width="100%" height="20rem" borderRadius="14px"></p-skeleton>
+      <app-loading-spinner text="Loading sector data..."></app-loading-spinner>
     </div>
 
     <!-- Two-column layout -->

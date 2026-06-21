@@ -3,15 +3,13 @@ import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CardModule } from 'primeng/card';
-import { SkeletonModule } from 'primeng/skeleton';
 import { ButtonModule } from 'primeng/button';
-import { Select } from 'primeng/select';
-import { InputTextModule } from 'primeng/inputtext';
-import { InputTextarea } from 'primeng/inputtextarea';
 import { TagModule } from 'primeng/tag';
 import { DialogModule } from 'primeng/dialog';
-import { ProgressBarModule } from 'primeng/progressbar';
 import { AutoCompleteModule } from 'primeng/autocomplete';
+import { Select } from 'primeng/select';
+import { InputTextarea } from 'primeng/inputtextarea';
+import { LoadingSpinnerComponent } from '../../components/loading-spinner/loading-spinner.component';
 import { createChart, IChartApi, CandlestickSeries } from 'lightweight-charts';
 import { StockService, ArmandAnalysis, Annotation, SearchResult } from '../../services/stock.service';
 import { AuthService } from '../../services/auth.service';
@@ -23,9 +21,9 @@ import jsPDF from 'jspdf';
   selector: 'app-dashboard',
   standalone: true,
   imports: [
-    CommonModule, FormsModule, CardModule, SkeletonModule, ButtonModule,
-    Select, InputTextModule, InputTextarea, TagModule, DialogModule,
-    AutoCompleteModule, ProgressBarModule
+    CommonModule, FormsModule, CardModule, ButtonModule,
+    TagModule, DialogModule, AutoCompleteModule, Select,
+    InputTextarea, LoadingSpinnerComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'

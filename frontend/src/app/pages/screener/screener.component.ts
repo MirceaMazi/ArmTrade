@@ -5,14 +5,14 @@ import { Router } from '@angular/router';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { SkeletonModule } from 'primeng/skeleton';
 import { CheckboxModule } from 'primeng/checkbox';
+import { LoadingSpinnerComponent } from '../../components/loading-spinner/loading-spinner.component';
 import { StockService, ScreenerResponse } from '../../services/stock.service';
 
 @Component({
   selector: 'app-screener',
   standalone: true,
-  imports: [CommonModule, FormsModule, CardModule, ButtonModule, InputTextModule, SkeletonModule, CheckboxModule],
+  imports: [CommonModule, FormsModule, CardModule, ButtonModule, InputTextModule, LoadingSpinnerComponent, CheckboxModule],
   templateUrl: './screener.component.html',
   styleUrl: './screener.component.css'
 })

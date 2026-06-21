@@ -1,0 +1,16 @@
+.loading-section { display: flex; flex-direction: column; align-items: center; padding: 4rem 0; width: 100%; }
+.loading-text { color: #c7d2fe; font-size: 1.1rem; margin-top: 1.5rem; font-weight: 600; text-align: center; }
+.loading-subtext { color: #64748b; font-size: 0.85rem; margin-top: 0.25rem; text-align: center; }
+
+.loading-spinner { position: relative; width: 60px; height: 60px; margin: 0 auto; }
+.spinner-ring {
+  position: absolute; inset: 0; border: 3px solid transparent;
+  border-top-color: #6366f1; border-radius: 50%;
+  animation: spin 1.2s linear infinite;
+}
+.spinner-ring.delay-1 { inset: 6px; border-top-color: #a855f7; animation-delay: 0.15s; }
+.spinner-ring.delay-2 { inset: 12px; border-top-color: #06b6d4; animation-delay: 0.3s; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.animate-fade-in { animation: fadeIn 0.5s ease forwards; opacity: 0; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }

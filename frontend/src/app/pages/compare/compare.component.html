@@ -1,11 +1,16 @@
-<div class="compare-page">
-  <nav class="top-bar animate-fade-in">
-    <div class="top-bar-left">
-      <button class="back-btn" (click)="goBack()">←</button>
-      <span class="nav-logo" (click)="goBack()">ArmTrade</span>
-      <span class="nav-ticker">Compare</span>
-    </div>
-  </nav>
+<div class="compare-container">
+  <!-- Animated background -->
+  <div class="bg-gradient"></div>
+  <div class="bg-grid"></div>
+
+  <!-- Header -->
+  <div class="compare-header animate-fade-in">
+    <button class="back-btn" (click)="goBack()">
+      <i class="pi pi-arrow-left"></i> Home
+    </button>
+    <h1 class="page-title">⚖️ Compare Stocks</h1>
+    <p class="page-subtitle">Compare fundamentals and AI evaluations side-by-side</p>
+  </div>
 
   <div class="compare-content animate-fade-in-up">
     <div class="compare-inputs">
@@ -65,7 +70,7 @@
     ></p-button>
 
     <div *ngIf="loadingFundamentals" class="loading-state">
-      <p-skeleton width="100%" height="20rem" borderRadius="16px"></p-skeleton>
+      <app-loading-spinner text="Fetching fundamentals..."></app-loading-spinner>
     </div>
 
     <!-- Fundamentals Comparison Table -->
@@ -104,7 +109,7 @@
     </div>
 
     <div *ngIf="loading" class="loading-state">
-      <p-skeleton width="100%" height="15rem" borderRadius="16px"></p-skeleton>
+      <app-loading-spinner text="Comparing stocks..."></app-loading-spinner>
     </div>
 
     <div *ngIf="comparison" class="comparison-results glass-card">

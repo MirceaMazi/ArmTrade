@@ -520,6 +520,173 @@ IMPORTANT: Return strictly as JSON matching this schema:
 	return callGeminiForType[NetworkResponse](apiKey, prompt)
 }
 
+// --- Smart Money & Insider Radar ---
+
+type InsiderPattern struct {
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	Sentiment   string `json:"sentiment"` // "bullish", "bearish", "neutral"
+}
+
+type KeyTransaction struct {
+	InsiderName string  `json:"insiderName"`
+	Title       string  `json:"title"`
+	Type        string  `json:"type"` // "Buy", "Sell", "Option Exercise"
+	Shares      int64   `json:"shares"`
+	Value       float64 `json:"value"`
+	Date        string  `json:"date"`
+}
+
+type InsiderAnalysis struct {
+	SignalStrength  string           `json:"signalStrength"`  // "high", "moderate", "low", "neutral"
+	Narrative       string           `json:"narrative"`       // AI summary
+	Patterns        []InsiderPattern `json:"patterns"`
+	KeyTransactions []KeyTransaction `json:"keyTransactions"`
+	BuyVsSellRatio  string           `json:"buyVsSellRatio"`  // e.g., "3:1 Buy"
+}
+
+func (s *ArmandService) AnalyzeInsiderActivity(ticker string, insiderData map[string]interface{}) (*InsiderAnalysis, error) {
+	apiKey := os.Getenv("GEMINI_API_KEY")
+	if apiKey == "" {
+		return &InsiderAnalysis{
+			SignalStrength: "neutral",
+			Narrative:      "GEMINI_API_KEY not set — cannot analyze insider activity.",
+			Patterns:       []InsiderPattern{},
+			KeyTransactions: []KeyTransaction{},
+			BuyVsSellRatio: "N/A",
+		}, nil
+	}
+
+	// Serialize the raw Yahoo data so Gemini can analyze it
+	dataBytes, _ := json.Marshal(insiderData)
+
+	schema := `{
+  "type": "object",
+  "properties": {
+    "signalStrength": {"type": "string", "enum": ["high", "moderate", "low", "neutral"]},
+    "narrative": {"type": "string", "description": "2-4 sentence plain-English summary of what the insider activity suggests for investors"},
+    "patterns": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "title": {"type": "string", "description": "Short pattern name, e.g. Cluster Buying Detected"},
+          "description": {"type": "string", "description": "1-2 sentence explanation"},
+          "sentiment": {"type": "string", "enum": ["bullish", "bearish", "neutral"]}
+        },
+        "required": ["title", "description", "sentiment"]
+      }
+    },
+    "keyTransactions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "insiderName": {"type": "string"},
+          "title": {"type": "string", "description": "Their corporate title e.g. CEO, CFO, Director"},
+          "type": {"type": "string", "enum": ["Buy", "Sell", "Option Exercise"]},
+          "shares": {"type": "integer"},
+          "value": {"type": "number"},
+          "date": {"type": "string", "description": "Date in YYYY-MM-DD format"}
+        },
+        "required": ["insiderName", "title", "type", "shares", "value", "date"]
+      }
+    },
+    "buyVsSellRatio": {"type": "string", "description": "Ratio like 3:1 Buy or 1:5 Sell"}
+  },
+  "required": ["signalStrength", "narrative", "patterns", "keyTransactions", "buyVsSellRatio"]
+}`
+
+	prompt := fmt.Sprintf(`You are Armand, an elite financial AI assistant for the ArmTrade platform.
+
+You have been given REAL insider trading data for %s sourced from SEC Form 4 filings via Yahoo Finance.
+Your job is to ANALYZE this data and surface patterns — do NOT invent any transactions.
+
+Here is the raw insider data:
+%s
+
+Analyze this data and identify:
+
+1. **Signal Strength**: How significant is the insider activity?
+   - "high" = Multiple insiders buying heavily, cluster buying, unusual large purchases
+   - "moderate" = Some notable activity worth watching
+   - "low" = Mostly routine, small transactions
+   - "neutral" = No significant signal, or only option exercises / routine sales
+
+2. **Narrative**: Write a 2-4 sentence plain-English summary of what the insider activity suggests.
+   Be specific — mention names, amounts, and dates from the actual data.
+
+3. **Patterns**: Identify 1-4 patterns (e.g., "Cluster Buying Before Earnings", "CEO Loading Up", "Director Selling After Run-Up").
+   Only report patterns that are actually supported by the data.
+
+4. **Key Transactions**: Extract the 3-8 most notable transactions from the data.
+   These MUST be real transactions from the provided data — do not fabricate any.
+
+5. **Buy vs Sell Ratio**: Summarize the overall direction (e.g., "3:1 Buy", "1:2 Sell", "Balanced").
+
+IMPORTANT: Return strictly as JSON matching this schema:
+%s`, ticker, string(dataBytes), schema)
+
+	analysis, err := callGeminiForType[InsiderAnalysis](apiKey, prompt)
+	if err == nil && analysis != nil {
+		analysis.BuyVsSellRatio = extractBuySellRatio(insiderData)
+	}
+	return analysis, err
+}
+
+func extractBuySellRatio(data map[string]interface{}) string {
+	qs, ok := data["quoteSummary"].(map[string]interface{})
+	if !ok { return "N/A" }
+	res, ok := qs["result"].([]interface{})
+	if !ok || len(res) == 0 { return "N/A" }
+	first, ok := res[0].(map[string]interface{})
+	if !ok { return "N/A" }
+	nspa, ok := first["netSharePurchaseActivity"].(map[string]interface{})
+	if !ok { return "N/A" }
+
+	buyCount := 0
+	if bc, ok := nspa["buyInfoCount"].(map[string]interface{}); ok {
+		if raw, ok := bc["raw"].(float64); ok {
+			buyCount = int(raw)
+		}
+	}
+	sellCount := 0
+	if sc, ok := nspa["sellInfoCount"].(map[string]interface{}); ok {
+		if raw, ok := sc["raw"].(float64); ok {
+			sellCount = int(raw)
+		}
+	}
+
+	if buyCount == 0 && sellCount == 0 {
+		return "Neutral"
+	}
+	
+	// Simplify the ratio
+	gcd := func(a, b int) int {
+		for b != 0 {
+			t := b
+			b = a % b
+			a = t
+		}
+		return a
+	}
+	
+	divisor := gcd(buyCount, sellCount)
+	if divisor == 0 {
+		divisor = 1
+	}
+	
+	sBuy := buyCount / divisor
+	sSell := sellCount / divisor
+	
+	if sBuy > sSell {
+		return fmt.Sprintf("%d:%d Buy", sBuy, sSell)
+	} else if sSell > sBuy {
+		return fmt.Sprintf("%d:%d Sell", sBuy, sSell)
+	}
+	return "1:1 Neutral"
+}
+
 // callGeminiForType is a generic helper to call Gemini and parse the response into any type
 func callGeminiForType[T any](apiKey, prompt string) (*T, error) {
 	reqBody := geminiRequest{}

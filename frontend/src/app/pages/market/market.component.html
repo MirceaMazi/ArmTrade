@@ -1,18 +1,23 @@
-<div class="market-page">
-  <nav class="top-bar animate-fade-in">
-    <div class="top-bar-left">
-      <button class="back-btn" (click)="goBack()">←</button>
-      <span class="nav-logo" (click)="goBack()">ArmTrade</span>
-      <span class="nav-ticker">Market Overview</span>
-    </div>
-  </nav>
+<div class="market-container">
+  <!-- Animated background -->
+  <div class="bg-gradient"></div>
+  <div class="bg-grid"></div>
+
+  <!-- Header -->
+  <div class="market-header animate-fade-in">
+    <button class="back-btn" (click)="goBack()">
+      <i class="pi pi-arrow-left"></i> Home
+    </button>
+    <h1 class="page-title">📊 Market Overview</h1>
+    <p class="page-subtitle">Track macroeconomic indicators and sector performance in real-time</p>
+  </div>
 
   <div class="market-content">
     <!-- Macro Indicators Row -->
     <div class="section-title animate-fade-in-up">Macro Indicators</div>
     <div class="macro-row animate-fade-in-up">
       <div *ngIf="loadingMacro" class="macro-skeleton">
-        <p-skeleton *ngFor="let i of [1,2,3,4,5,6,7]" width="140px" height="70px" borderRadius="12px"></p-skeleton>
+        <app-loading-spinner text="Fetching macro indicators..."></app-loading-spinner>
       </div>
       <div *ngIf="!loadingMacro" class="macro-grid">
         <div class="macro-card" *ngFor="let m of macros">
@@ -29,7 +34,7 @@
     <div class="section-title animate-fade-in-up" style="animation-delay: 0.05s">Sector Heatmap</div>
     <div class="heatmap-grid animate-fade-in-up" style="animation-delay: 0.1s">
       <div *ngIf="loadingSectors">
-        <p-skeleton *ngFor="let i of [1,2,3,4,5,6]" width="100%" height="80px" borderRadius="12px"></p-skeleton>
+        <app-loading-spinner text="Loading sector heatmap..."></app-loading-spinner>
       </div>
       <div *ngIf="!loadingSectors" class="sectors-grid">
         <div class="sector-tile" *ngFor="let s of sectors"
@@ -48,7 +53,7 @@
     <!-- Market Movers -->
     <div class="section-title animate-fade-in-up" style="animation-delay: 0.15s">Market Movers</div>
     <div *ngIf="loadingMovers" class="movers-skeleton animate-fade-in-up">
-      <p-skeleton width="100%" height="200px" borderRadius="16px"></p-skeleton>
+      <app-loading-spinner text="Finding market movers..."></app-loading-spinner>
     </div>
     <div *ngIf="!loadingMovers && movers" class="movers-grid animate-fade-in-up" style="animation-delay: 0.2s">
       <!-- Gainers -->

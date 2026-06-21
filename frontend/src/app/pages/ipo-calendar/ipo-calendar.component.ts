@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { SkeletonModule } from 'primeng/skeleton';
+import { LoadingSpinnerComponent } from '../../components/loading-spinner/loading-spinner.component';
 import { MarketService, IpoItem } from '../../services/market.service';
 
 interface IpoWeekGroup {
@@ -13,7 +13,7 @@ interface IpoWeekGroup {
 @Component({
   selector: 'app-ipo-calendar',
   standalone: true,
-  imports: [CommonModule, FormsModule, SkeletonModule],
+  imports: [CommonModule, FormsModule, LoadingSpinnerComponent],
   templateUrl: './ipo-calendar.component.html',
   styleUrl: './ipo-calendar.component.css'
 })

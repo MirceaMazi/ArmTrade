@@ -8,6 +8,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { SkeletonModule } from 'primeng/skeleton';
 import { StockService, SearchResult, NetworkResponse, NetworkNode, NetworkEdge } from '../../services/stock.service';
+import { LoadingSpinnerComponent } from '../../components/loading-spinner/loading-spinner.component';
 
 interface GraphNode {
   ticker: string;
@@ -57,7 +58,7 @@ const RELATIONSHIP_ICONS: Record<string, string> = {
 @Component({
   selector: 'app-network',
   standalone: true,
-  imports: [CommonModule, FormsModule, AutoCompleteModule, SkeletonModule],
+  imports: [CommonModule, FormsModule, AutoCompleteModule, SkeletonModule, LoadingSpinnerComponent],
   templateUrl: './network.component.html',
   styleUrls: ['./network.component.css']
 })

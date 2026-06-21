@@ -2,13 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { SkeletonModule } from 'primeng/skeleton';
+import { LoadingSpinnerComponent } from '../../components/loading-spinner/loading-spinner.component';
 import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-market',
   standalone: true,
-  imports: [CommonModule, SkeletonModule, DecimalPipe],
+  imports: [CommonModule, LoadingSpinnerComponent, DecimalPipe],
   templateUrl: './market.component.html',
   styleUrl: './market.component.css'
 })

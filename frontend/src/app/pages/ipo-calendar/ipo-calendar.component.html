@@ -3,12 +3,14 @@
   <div class="bg-grid"></div>
 
   <div class="calendar-content">
-    <button class="back-btn" (click)="goHome()">← Back</button>
-
-    <div class="page-header">
-      <h1 class="page-title">🗓️ IPO Calendar</h1>
-      <p class="page-desc">Upcoming initial public offerings over the next month, grouped by week.</p>
-    </div>
+  <!-- Header -->
+  <div class="calendar-header animate-fade-in" style="text-align: center; margin-bottom: 2rem;">
+    <button class="back-btn" (click)="goHome()">
+      <i class="pi pi-arrow-left"></i> Home
+    </button>
+    <h1 class="page-title"><i class="pi pi-calendar" style="font-size: 1.5rem; margin-right: 0.5rem; color: #818cf8;"></i> IPO Calendar</h1>
+    <p class="page-desc" style="color: #94a3b8; font-size: 1rem; margin: 0;">Upcoming initial public offerings over the next month, grouped by week.</p>
+  </div>
 
     <div class="filter-bar">
       <i class="pi pi-search"></i>
@@ -21,9 +23,7 @@
     </div>
 
     <div *ngIf="loading" class="loading-block">
-      <p-skeleton width="100%" height="3rem" borderRadius="8px"></p-skeleton>
-      <p-skeleton width="100%" height="3rem" borderRadius="8px"></p-skeleton>
-      <p-skeleton width="100%" height="3rem" borderRadius="8px"></p-skeleton>
+      <app-loading-spinner text="Loading IPO calendar..."></app-loading-spinner>
     </div>
 
     <div *ngIf="error" class="error-box">{{ error }}</div>

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { SkeletonModule } from 'primeng/skeleton';
+import { LoadingSpinnerComponent } from '../../components/loading-spinner/loading-spinner.component';
 import { MarketService, EarningsItem } from '../../services/market.service';
 
 interface EarningsGroup {
@@ -18,7 +18,7 @@ interface EarningsGroup {
 @Component({
   selector: 'app-earnings-calendar',
   standalone: true,
-  imports: [CommonModule, FormsModule, SkeletonModule],
+  imports: [CommonModule, FormsModule, LoadingSpinnerComponent],
   templateUrl: './earnings-calendar.component.html',
   styleUrl: './earnings-calendar.component.css'
 })
