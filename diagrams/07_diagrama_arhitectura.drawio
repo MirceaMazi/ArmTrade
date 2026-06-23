@@ -1,0 +1,173 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Diagrama de Arhitectura" id="arch-diagram">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="title" value="&lt;b&gt;Diagrama de Arhitectură &amp;mdash; ArmTrade&lt;/b&gt;&lt;br/&gt;&lt;i&gt;Platformă Web pentru Analiza Piețelor Financiare cu Inteligență Artificială&lt;/i&gt;" style="html=1;text;align=center;fontSize=18;fontStyle=1;strokeColor=none;fillColor=none;verticalAlign=middle;" parent="1" vertex="1">
+          <mxGeometry x="100" y="10" width="1400" height="50" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="user" value="&lt;b&gt;Utilizator&lt;/b&gt;&lt;br/&gt;Browser Web" style="shape=umlActor;html=1;verticalLabelPosition=bottom;verticalAlign=top;align=center;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="770" y="70" width="40" height="60" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="layer_fe" value="&lt;b&gt;Nivel Prezentare — Frontend (Angular 18 + TypeScript)&lt;/b&gt;" style="html=1;rounded=1;arcSize=4;fillColor=#dae8fc;strokeColor=#6c8ebf;strokeWidth=2;fontSize=14;fontStyle=1;verticalAlign=top;spacingTop=8;align=left;spacingLeft=14;" parent="1" vertex="1">
+          <mxGeometry x="40" y="160" width="1520" height="220" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="grp_pages" value="&lt;b&gt;Componente Pagini (12 pagini)&lt;/b&gt;" style="html=1;rounded=1;arcSize=6;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;fontSize=11;fontStyle=1;verticalAlign=top;spacingTop=5;align=center;" parent="1" vertex="1">
+          <mxGeometry x="60" y="200" width="620" height="160" as="geometry"/>
+        </mxCell>
+        <mxCell id="pg1" value="&lt;b&gt;Home&lt;/b&gt;&lt;br/&gt;Căutare, Watchlist" style="html=1;rounded=1;arcSize=8;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;align=center;" parent="1" vertex="1">
+          <mxGeometry x="75" y="235" width="130" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="pg2" value="&lt;b&gt;Dashboard&lt;/b&gt;&lt;br/&gt;Grafice, Analiză AI" style="html=1;rounded=1;arcSize=8;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;align=center;" parent="1" vertex="1">
+          <mxGeometry x="215" y="235" width="130" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="pg3" value="&lt;b&gt;Market&lt;/b&gt;&lt;br/&gt;Heatmap, Movers" style="html=1;rounded=1;arcSize=8;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;align=center;" parent="1" vertex="1">
+          <mxGeometry x="355" y="235" width="130" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="pg4" value="&lt;b&gt;Compare&lt;/b&gt;&lt;br/&gt;Comparare AI" style="html=1;rounded=1;arcSize=8;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;align=center;" parent="1" vertex="1">
+          <mxGeometry x="495" y="235" width="130" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="pg5" value="&lt;b&gt;Screener&lt;/b&gt;&lt;br/&gt;Filtrare AI" style="html=1;rounded=1;arcSize=8;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;align=center;" parent="1" vertex="1">
+          <mxGeometry x="75" y="295" width="130" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="pg6" value="&lt;b&gt;Earnings&lt;/b&gt;&lt;br/&gt;Calendar, Rezumat" style="html=1;rounded=1;arcSize=8;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;align=center;" parent="1" vertex="1">
+          <mxGeometry x="215" y="295" width="130" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="pg7" value="&lt;b&gt;Insider&lt;/b&gt;&lt;br/&gt;Tranzacții interne" style="html=1;rounded=1;arcSize=8;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;align=center;" parent="1" vertex="1">
+          <mxGeometry x="355" y="295" width="130" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="pg8" value="&lt;b&gt;Login&lt;/b&gt;&lt;br/&gt;Autentificare" style="html=1;rounded=1;arcSize=8;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;align=center;" parent="1" vertex="1">
+          <mxGeometry x="495" y="295" width="130" height="45" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="grp_svc" value="&lt;b&gt;Servicii Angular&lt;/b&gt;" style="html=1;rounded=1;arcSize=6;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2;fontSize=11;fontStyle=1;verticalAlign=top;spacingTop=5;align=center;" parent="1" vertex="1">
+          <mxGeometry x="700" y="200" width="400" height="160" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc1" value="&lt;b&gt;AuthService&lt;/b&gt;&lt;br/&gt;JWT localStorage" style="html=1;rounded=1;arcSize=8;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=center;" parent="1" vertex="1">
+          <mxGeometry x="715" y="235" width="170" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc2" value="&lt;b&gt;StockService&lt;/b&gt;&lt;br/&gt;Apeluri HTTP REST" style="html=1;rounded=1;arcSize=8;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=center;" parent="1" vertex="1">
+          <mxGeometry x="900" y="235" width="185" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc3" value="&lt;b&gt;WatchlistService&lt;/b&gt;&lt;br/&gt;CRUD portofoliu" style="html=1;rounded=1;arcSize=8;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=center;" parent="1" vertex="1">
+          <mxGeometry x="715" y="295" width="170" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc4" value="&lt;b&gt;PriceWsService&lt;/b&gt;&lt;br/&gt;WebSocket timp-real" style="html=1;rounded=1;arcSize=8;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=center;" parent="1" vertex="1">
+          <mxGeometry x="900" y="295" width="185" height="45" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="grp_lib" value="&lt;b&gt;Librării Externe&lt;/b&gt;" style="html=1;rounded=1;arcSize=6;fillColor=#f5f5f5;strokeColor=#666666;strokeWidth=2;fontSize=11;fontStyle=1;verticalAlign=top;spacingTop=5;align=center;" parent="1" vertex="1">
+          <mxGeometry x="1120" y="200" width="420" height="160" as="geometry"/>
+        </mxCell>
+        <mxCell id="lib1" value="&lt;b&gt;PrimeNG&lt;/b&gt;&lt;br/&gt;Componente UI" style="html=1;rounded=1;arcSize=8;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;align=center;" parent="1" vertex="1">
+          <mxGeometry x="1140" y="235" width="180" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="lib2" value="&lt;b&gt;Lightweight Charts&lt;/b&gt;&lt;br/&gt;Grafice candlestick" style="html=1;rounded=1;arcSize=8;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;align=center;" parent="1" vertex="1">
+          <mxGeometry x="1340" y="235" width="180" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="lib3" value="&lt;b&gt;jsPDF + html2canvas&lt;/b&gt;&lt;br/&gt;Export PDF" style="html=1;rounded=1;arcSize=8;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;align=center;" parent="1" vertex="1">
+          <mxGeometry x="1140" y="295" width="180" height="45" as="geometry"/>
+        </mxCell>
+        <mxCell id="lib4" value="&lt;b&gt;AuthInterceptor&lt;/b&gt;&lt;br/&gt;Bearer Token auto" style="html=1;rounded=1;arcSize=8;fillColor=#f5f5f5;strokeColor=#666666;fontSize=10;align=center;" parent="1" vertex="1">
+          <mxGeometry x="1340" y="295" width="180" height="45" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="arr_user_fe" value="" style="html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#6c8ebf;" parent="1" source="user" target="layer_fe" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="layer_be" value="&lt;b&gt;Nivel Logică de Afaceri — Backend (Go 1.25 / Gin Framework, Port 8080)&lt;/b&gt;" style="html=1;rounded=1;arcSize=4;fillColor=#f8cecc;strokeColor=#b85450;strokeWidth=2;fontSize=14;fontStyle=1;verticalAlign=top;spacingTop=8;align=left;spacingLeft=14;" parent="1" vertex="1">
+          <mxGeometry x="40" y="430" width="1520" height="260" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="grp_mw" value="&lt;b&gt;Router + Middleware&lt;/b&gt;" style="html=1;rounded=1;arcSize=6;fillColor=#ffe6cc;strokeColor=#d79b00;strokeWidth=2;fontSize=11;fontStyle=1;verticalAlign=top;spacingTop=5;align=center;" parent="1" vertex="1">
+          <mxGeometry x="60" y="470" width="700" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="mw1" value="&lt;b&gt;Gin Router&lt;/b&gt;" style="html=1;rounded=1;arcSize=8;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;align=center;" parent="1" vertex="1">
+          <mxGeometry x="75" y="500" width="150" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="mw2" value="&lt;b&gt;CORS Middleware&lt;/b&gt;" style="html=1;rounded=1;arcSize=8;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;align=center;" parent="1" vertex="1">
+          <mxGeometry x="240" y="500" width="150" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="mw3" value="&lt;b&gt;JWT Auth Middleware&lt;/b&gt;" style="html=1;rounded=1;arcSize=8;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;align=center;" parent="1" vertex="1">
+          <mxGeometry x="405" y="500" width="150" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="mw4" value="&lt;b&gt;Rate Limiter&lt;/b&gt;" style="html=1;rounded=1;arcSize=8;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=10;align=center;" parent="1" vertex="1">
+          <mxGeometry x="570" y="500" width="150" height="35" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="grp_hand" value="&lt;b&gt;Handlere API (api/)&lt;/b&gt;" style="html=1;rounded=1;arcSize=6;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;fontSize=11;fontStyle=1;verticalAlign=top;spacingTop=5;align=center;" parent="1" vertex="1">
+          <mxGeometry x="60" y="565" width="700" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="h1" value="&lt;b&gt;auth.go&lt;/b&gt;&lt;br/&gt;Register, Login" style="html=1;rounded=1;arcSize=8;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;align=center;" parent="1" vertex="1">
+          <mxGeometry x="75" y="595" width="120" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="h2" value="&lt;b&gt;handlers.go&lt;/b&gt;&lt;br/&gt;Search, Chart, News" style="html=1;rounded=1;arcSize=8;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;align=center;" parent="1" vertex="1">
+          <mxGeometry x="205" y="595" width="120" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="h3" value="&lt;b&gt;market.go&lt;/b&gt;&lt;br/&gt;Sectors, Macro" style="html=1;rounded=1;arcSize=8;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;align=center;" parent="1" vertex="1">
+          <mxGeometry x="335" y="595" width="120" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="h4" value="&lt;b&gt;watchlist.go&lt;/b&gt;&lt;br/&gt;CRUD Watchlist" style="html=1;rounded=1;arcSize=8;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;align=center;" parent="1" vertex="1">
+          <mxGeometry x="465" y="595" width="120" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="h5" value="&lt;b&gt;ws.go&lt;/b&gt;&lt;br/&gt;WebSocket prețuri" style="html=1;rounded=1;arcSize=8;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=10;align=center;" parent="1" vertex="1">
+          <mxGeometry x="595" y="595" width="120" height="55" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="grp_besvc" value="&lt;b&gt;Servicii Backend (services/)&lt;/b&gt;" style="html=1;rounded=1;arcSize=6;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=2;fontSize=11;fontStyle=1;verticalAlign=top;spacingTop=5;align=center;" parent="1" vertex="1">
+          <mxGeometry x="790" y="470" width="340" height="205" as="geometry"/>
+        </mxCell>
+        <mxCell id="bsvc1" value="&lt;b&gt;YahooService&lt;/b&gt;&lt;hr/&gt;Search, GetChart&lt;br/&gt;Fundamentals, News&lt;br/&gt;Cache TTL 60s–5min" style="html=1;rounded=1;arcSize=8;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;align=left;spacingLeft=5;verticalAlign=top;spacingTop=3;" parent="1" vertex="1">
+          <mxGeometry x="805" y="500" width="150" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="bsvc2" value="&lt;b&gt;ArmandService&lt;/b&gt;&lt;hr/&gt;Analyze, Compare&lt;br/&gt;Screen, Earnings&lt;br/&gt;Gemini 3.1 Flash Lite" style="html=1;rounded=1;arcSize=8;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=10;align=left;spacingLeft=5;verticalAlign=top;spacingTop=3;" parent="1" vertex="1">
+          <mxGeometry x="965" y="500" width="150" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="bsvc3" value="&lt;b&gt;config.AppConfig&lt;/b&gt; — JWT, CORS, Port, Gemini Key" style="html=1;rounded=1;arcSize=8;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=center;" parent="1" vertex="1">
+          <mxGeometry x="805" y="605" width="305" height="35" as="geometry"/>
+        </mxCell>
+        <mxCell id="bsvc4" value="&lt;b&gt;db.Database&lt;/b&gt; — Conexiune MongoDB, Colecții" style="html=1;rounded=1;arcSize=8;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;align=center;" parent="1" vertex="1">
+          <mxGeometry x="805" y="645" width="305" height="25" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="arr_fe_be" value="&lt;b&gt;HTTP REST / WebSocket&lt;/b&gt;" style="html=1;endArrow=block;endFill=1;strokeWidth=3;strokeColor=#6c8ebf;fontSize=12;" parent="1" source="layer_fe" target="layer_be" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="layer_ext" value="&lt;b&gt;Nivel Date — Servicii Externe și Bază de Date&lt;/b&gt;" style="html=1;rounded=1;arcSize=4;fillColor=#f5f5f5;strokeColor=#666666;strokeWidth=2;fontSize=14;fontStyle=1;verticalAlign=top;spacingTop=8;align=left;spacingLeft=14;" parent="1" vertex="1">
+          <mxGeometry x="40" y="740" width="1520" height="160" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="ext_mongo" value="&lt;b&gt;MongoDB 7&lt;/b&gt;&lt;br/&gt;Bază de date NoSQL&lt;br/&gt;&lt;i&gt;users, watchlist, analyses&lt;/i&gt;&lt;br/&gt;Port: 27017" style="html=1;shape=cylinder3;size=12;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;verticalAlign=top;spacingTop=5;" parent="1" vertex="1">
+          <mxGeometry x="100" y="780" width="200" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="ext_yahoo" value="&lt;b&gt;Yahoo Finance API&lt;/b&gt;&lt;br/&gt;&lt;i&gt;(Serviciu extern)&lt;/i&gt;&lt;br/&gt;Prețuri, OHLCV, Fundamentale&lt;br/&gt;Știri, Dividende, Screener" style="html=1;rounded=1;arcSize=10;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;dashed=1;dashPattern=6 4;align=center;verticalAlign=top;spacingTop=5;" parent="1" vertex="1">
+          <mxGeometry x="420" y="780" width="240" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="ext_gemini" value="&lt;b&gt;Google Gemini 3.1 Flash Lite&lt;/b&gt;&lt;br/&gt;&lt;i&gt;(Serviciu extern — LLM)&lt;/i&gt;&lt;br/&gt;Analiză AI, Screening&lt;br/&gt;Comparare, Sentiment" style="html=1;rounded=1;arcSize=10;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;dashed=1;dashPattern=6 4;align=center;verticalAlign=top;spacingTop=5;" parent="1" vertex="1">
+          <mxGeometry x="780" y="780" width="240" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="ext_insider" value="&lt;b&gt;Insider Trading API&lt;/b&gt;&lt;br/&gt;&lt;i&gt;(Serviciu extern)&lt;/i&gt;&lt;br/&gt;Tranzacții interne&lt;br/&gt;Date insider" style="html=1;rounded=1;arcSize=10;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;dashed=1;dashPattern=6 4;align=center;verticalAlign=top;spacingTop=5;" parent="1" vertex="1">
+          <mxGeometry x="1140" y="780" width="240" height="100" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="arr_be_mongo" value="&lt;b&gt;MongoDB Wire Protocol&lt;/b&gt;" style="html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#d6b656;fontSize=11;" parent="1" source="bsvc4" target="ext_mongo" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="arr_be_yahoo" value="&lt;b&gt;HTTPS REST&lt;/b&gt;" style="html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#b85450;fontSize=11;" parent="1" source="bsvc1" target="ext_yahoo" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="arr_be_gemini" value="&lt;b&gt;HTTPS REST + JSON&lt;/b&gt;" style="html=1;endArrow=block;endFill=1;strokeWidth=2;strokeColor=#9673a6;fontSize=11;" parent="1" source="bsvc2" target="ext_gemini" edge="1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
