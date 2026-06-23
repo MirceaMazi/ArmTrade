@@ -49,7 +49,7 @@ func InitDatabase() {
 		Options: options.Index().SetUnique(true),
 	})
 	if err != nil {
-		log.Fatalf("Failed to create users index: %v", err)
+		log.Printf("Warning: Failed to create users index: %v", err)
 	}
 
 	watchlistCol := DB.Collection("watchlist")
@@ -62,7 +62,7 @@ func InitDatabase() {
 		},
 	})
 	if err != nil {
-		log.Fatalf("Failed to create watchlist index: %v", err)
+		log.Printf("Warning: Failed to create watchlist index: %v", err)
 	}
 
 	log.Printf("MongoDB connected successfully (%s/%s)\n", uri, dbName)
