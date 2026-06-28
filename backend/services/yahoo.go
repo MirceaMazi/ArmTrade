@@ -3,6 +3,7 @@ package services
 import (
 	"bytes"
 	"encoding/json"
+	"encoding/xml"
 	"fmt"
 	"io"
 	"net/http"
@@ -76,9 +77,90 @@ func (s *YahooFinanceService) Search(query string) (map[string]interface{}, erro
 }
 
 func (s *YahooFinanceService) GetNews(ticker string) (map[string]interface{}, error) {
-	url := fmt.Sprintf("https://query2.finance.yahoo.com/v1/finance/search?q=%s&newsCount=3", ticker)
+	// Try the ticker-specific RSS feed first — it returns the same curated news
+	// shown on Yahoo Finance's stock page, far more relevant than the search API
+	if news := s.fetchRSSNews(ticker); len(news) > 0 {
+		return map[string]interface{}{"news": news}, nil
+	}
+
+	// Fallback: resolve company name and search
+	query := ticker
+	if searchData, err := s.Search(ticker); err == nil {
+		if quotes, ok := searchData["quotes"].([]interface{}); ok && len(quotes) > 0 {
+			if first, ok := quotes[0].(map[string]interface{}); ok {
+				if name, ok := first["shortname"].(string); ok && name != "" {
+					query = name
+				} else if name, ok := first["longname"].(string); ok && name != "" {
+					query = name
+				}
+			}
+		}
+	}
+
+	url := fmt.Sprintf("https://query2.finance.yahoo.com/v1/finance/search?q=%s&newsCount=5&quotesCount=0",
+		neturl.QueryEscape(query))
 	return s.makeRequest(url, false)
 }
+
+// --- RSS News Feed ---
+
+type rssFeed struct {
+	Channel struct {
+		Items []rssItem `xml:"item"`
+	} `xml:"channel"`
+}
+
+type rssItem struct {
+	Title   string `xml:"title"`
+	Link    string `xml:"link"`
+	PubDate string `xml:"pubDate"`
+}
+
+func (s *YahooFinanceService) fetchRSSNews(ticker string) []interface{} {
+	rssURL := fmt.Sprintf("https://feeds.finance.yahoo.com/rss/2.0/headline?s=%s&region=US&lang=en-US",
+		neturl.QueryEscape(ticker))
+
+	req, err := http.NewRequest("GET", rssURL, nil)
+	if err != nil {
+		return nil
+	}
+	req.Header.Set(headerUserAgent, userAgentValue)
+
+	resp, err := s.client.Do(req)
+	if err != nil {
+		return nil
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil
+	}
+
+	var feed rssFeed
+	if err := xml.Unmarshal(body, &feed); err != nil {
+		return nil
+	}
+
+	var news []interface{}
+	for _, item := range feed.Channel.Items {
+		if item.Title != "" && item.Link != "" {
+			news = append(news, map[string]interface{}{
+				"title": item.Title,
+				"link":  item.Link,
+			})
+		}
+		if len(news) >= 5 {
+			break
+		}
+	}
+	return news
+}
+
 
 func (s *YahooFinanceService) GetDividends(ticker string) (map[string]interface{}, error) {
 	url := fmt.Sprintf("https://query1.finance.yahoo.com/v8/finance/chart/%s?interval=1d&range=10y&events=div", ticker)

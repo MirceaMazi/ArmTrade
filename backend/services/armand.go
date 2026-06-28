@@ -66,7 +66,7 @@ func (s *ArmandService) Analyze(req *AnalyzeRequest) (*ArmandAnalysisResponse, e
 		return nil, fmt.Errorf("failed to get fundamentals for AI: %v", err)
 	}
 
-	chartData, err := s.yahooService.GetChart(ticker, "1d", "1mo")
+	chartData, err := s.yahooService.GetChart(ticker, "1d", "3mo")
 	if err != nil {
 		return nil, fmt.Errorf("failed to get chart data for AI: %v", err)
 	}
@@ -108,7 +108,7 @@ func (s *ArmandService) Analyze(req *AnalyzeRequest) (*ArmandAnalysisResponse, e
   },
   "required": ["recommendation", "reasoning", "socialSentiment", "annotations"]
 }`
-	promptWithSchema := prompt + "\n\nAlso, identify the 2-3 most significant price movement days from the chart data and provide annotations for them (date in YYYY-MM-DD, a brief description of why the move happened, and whether it was bullish/bearish/info).\n\nIMPORTANT: You must return the output strictly as a JSON object matching this schema:\n" + schema
+	promptWithSchema := prompt + "\n\nAlso, identify the 2-3 most significant price movement days from the chart data and provide annotations for them. For each annotation:\n- Date in YYYY-MM-DD format\n- A description explaining the REAL-WORLD REASON for the price move (e.g., earnings report, contract win/loss, analyst upgrade/downgrade, geopolitical event, sector rotation, regulatory news). Use the recent news headlines provided above and your general knowledge of recent events involving this company to explain what caused each move. Do NOT just describe the price action itself (e.g., avoid 'stock dropped on high volume' or 'sharp break below support'). Instead explain the actual catalyst.\n- Whether it was bullish/bearish/info\n\nIMPORTANT: You must return the output strictly as a JSON object matching this schema:\n" + schema
 
 	return callGeminiForType[ArmandAnalysisResponse](apiKey, promptWithSchema)
 }
@@ -179,6 +179,21 @@ func (s *ArmandService) buildPrompt(req *AnalyzeRequest, fundamentals map[string
 		whatIfStr = fmt.Sprintf("\nUser's 'What-If' Scenario / Question: \"%s\"\nProvide a risk assessment regarding this specific scenario.", req.WhatIf)
 	}
 
+	newsContext := ""
+	// Fetch recent news so the AI can reference real events in its analysis
+	if newsData, err := s.yahooService.GetNews(req.Ticker); err == nil && newsData != nil {
+		if newsArray, ok := newsData["news"].([]interface{}); ok && len(newsArray) > 0 {
+			newsContext = "\n\nRecent News Headlines for " + req.Ticker + ":\n"
+			for i, item := range newsArray {
+				if m, ok := item.(map[string]interface{}); ok {
+					if title, ok := m["title"].(string); ok {
+						newsContext += fmt.Sprintf("%d. %s\n", i+1, title)
+					}
+				}
+			}
+		}
+	}
+
 	return fmt.Sprintf(`You are Armand, an elite financial AI assistant for the ArmTrade platform.
 Your current investment philosophy/persona is: **%s**.
 Analyze the following stock data for %s and provide a clear investment recommendation (BUY, HOLD, or SELL).
@@ -190,8 +205,8 @@ Provide 3-4 bullet points of reasoning based strictly on the data and your perso
 Recent Fundamentals (JSON):
 %s
 
-Recent Price Action (1 Month) (JSON):
-%s`, personaStr, req.Ticker, whatIfStr, string(fBytes), string(cBytes))
+Recent Price Action (3 Months) (JSON):
+%s%s`, personaStr, req.Ticker, whatIfStr, string(fBytes), string(cBytes), newsContext)
 }
 
 type NewsItem struct {
